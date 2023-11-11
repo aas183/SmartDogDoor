@@ -44,7 +44,7 @@ public partial class PetViewModel : BaseViewModel
         {
             Debug.WriteLine(ex);
             await Shell.Current.DisplayAlert("Error!",
-                $"Unable to get monkeys: {ex.Message}", "OK");
+                $"Unable to get pets: {ex.Message}", "OK");
         }
         finally
         {

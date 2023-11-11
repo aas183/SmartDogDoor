@@ -12,6 +12,8 @@ public class PetService
     }
 
     List<Pet> petList = new ();
+    List<PetActivity> petActivityList = new();
+    List<Lock> lockList = new();
     public async Task<List<Pet>> GetPets()
     {
         try
@@ -30,7 +32,7 @@ public class PetService
                 Console.WriteLine("\nQuery data example:");
                 Console.WriteLine("=========================================\n");
 
-                String sql = "SELECT PetID, PetName, PetImage, InOut FROM PetInfoTable";
+                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
@@ -40,21 +42,22 @@ public class PetService
                         while (reader.Read())
                         {
                             Pet pet = new Pet();
-                            pet.ID = reader.GetString(0);
+                            //Console.WriteLine(reader.GetString(0));
+                            pet.Id = Convert.ToString(reader.GetInt64(0));
                             pet.Name = reader.GetString(1);
                             pet.Image = reader.GetString(2);
-                            string inOut = reader.GetString(4);
-                            if(String.Compare(inOut,"0") == 0)
-                            {
-                                pet.InOut = "Out";
-                            }
-                            else
+                            bool inOut = reader.GetBoolean(3);
+                            if(inOut)
                             {
                                 pet.InOut = "In";
                             }
+                            else
+                            {
+                                pet.InOut = "Out";
+                            }
                             petList.Add(pet);
                             
-                            Console.WriteLine("{0} {1} {2} {3}", reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3));
+                            Console.WriteLine("{0} {1} {2} {3}", pet.Id, pet.Name, pet.Image, pet.InOut);
                         }
                     }
                 }
@@ -70,7 +73,125 @@ public class PetService
         
     }
 
+    public async Task<List<PetActivity>> GetPetActvities()
+    {
+        try
+        {
+            //Pet pet;
 
+
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.DataSource = "pet-server.database.windows.net";
+            builder.UserID = "drewshetler";
+            builder.Password = "DT01-Dog-D00r";
+            builder.InitialCatalog = "Pet-Database";
+
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                Console.WriteLine("\nQuery data example:");
+                Console.WriteLine("=========================================\n");
+
+                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            PetActivity pet = new PetActivity();
+                            //Console.WriteLine(reader.GetString(0));
+                            pet.Id = Convert.ToString(reader.GetInt64(0));
+                            //pet.Name = reader.GetString(1);
+                            pet.Image = reader.GetString(2);
+                            bool inOut = reader.GetBoolean(3);
+                            if (inOut)
+                            {
+                                pet.InOut = "In";
+                            }
+                            else
+                            {
+                                pet.InOut = "Out";
+                            }
+                            petActivityList.Add(pet);
+
+                            Console.WriteLine("{0} {1} {2}", pet.Id, pet.Image, pet.InOut);
+                        }
+                    }
+                }
+            }
+        }
+        catch (SqlException e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+
+        //Console.ReadLine();
+        return petActivityList;
+
+    }
+
+    public async Task<List<Lock>> GetLocks()
+    {
+        try
+        {
+            //Pet pet;
+
+
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.DataSource = "pet-server.database.windows.net";
+            builder.UserID = "drewshetler";
+            builder.Password = "DT01-Dog-D00r";
+            builder.InitialCatalog = "Pet-Database";
+
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                Console.WriteLine("\nQuery data example:");
+                Console.WriteLine("=========================================\n");
+
+                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Lock pet = new Lock();
+                            //Console.WriteLine(reader.GetString(0));
+                            /*
+                            pet.Id = Convert.ToString(reader.GetInt64(0));
+                            //pet.Name = reader.GetString(1);
+                            pet.Image = reader.GetString(2);
+                            bool inOut = reader.GetBoolean(3);
+                            if (inOut)
+                            {
+                                pet.InOut = "In";
+                            }
+                            else
+                            {
+                                pet.InOut = "Out";
+                            }
+                            petActivityList.Add(pet);
+
+                            Console.WriteLine("{0} {1} {2}", pet.Id, pet.Image, pet.InOut);
+                            */
+                        }
+                    }
+                }
+            }
+        }
+        catch (SqlException e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+
+        //Console.ReadLine();
+        return lockList;
+
+    }
 
 
 

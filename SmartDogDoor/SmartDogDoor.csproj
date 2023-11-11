@@ -12,7 +12,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>SmartDogDoor</ApplicationTitle>
+		<ApplicationTitle>Smart Dog Door</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.smartdogdoor</ApplicationId>

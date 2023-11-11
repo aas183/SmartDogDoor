@@ -2,7 +2,7 @@
 
 namespace SmartDogDoor.Model;
 
-public class LockRetrictions
+public class Lock
 {
 
     public string TimeStart { get; set; }

@@ -7,38 +7,52 @@
              Title="{Binding Title}"
              x:Class="SmartDogDoor.View.MainPage">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+    <Grid ColumnDefinitions="*,*"
+      ColumnSpacing="5"
+      RowDefinitions="*, Auto"
+      RowSpacing="0">
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
+        <CollectionView BackgroundColor="Transparent"
+                    Grid.ColumnSpan="2"
+                    ItemsSource="{Binding Pets}"
+                    SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Pet">
+                    <Grid Padding="10">
+                        <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
+                            <Grid Padding="0" ColumnDefinitions="125,*">
+                                <Image Aspect="AspectFill"
+                                   Source="{Binding Image}"
+                                   WidthRequest="125"
+                                   HeightRequest="125"/>
+                                <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
+                                    <Label Text="{Binding InOut}" Style="{StaticResource MediumLabel}"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
 
-            <Label
-                Text="Default Application"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
+        </CollectionView>
 
-            <Label
-                Text="Welcome to Smart Dog Door"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
+        <Button Text="Get Pets"
+            Style="{StaticResource ButtonOutline}"
+            Command="{Binding GetPetsCommand}"
+            IsEnabled="{Binding IsNotBusy}"
+            Grid.Row="1"
+            Margin="8"/>
 
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                HorizontalOptions="Center" />
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+           IsRunning="{Binding IsBusy}"
+           HorizontalOptions="FillAndExpand"
+           VerticalOptions="CenterAndExpand"
+           Grid.RowSpan="2"
+           Grid.ColumnSpan="2"/>
 
-        </VerticalStackLayout>
-    </ScrollView>
+    </Grid>
+   
+
 
 </ContentPage>
