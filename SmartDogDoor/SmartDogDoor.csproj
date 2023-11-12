@@ -33,6 +33,9 @@
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\doggo.svg" ForegroundScale="0.45" />
+		<MauiIcon Include="Resources\Images\dog_paw.svg" />
+		<MauiIcon Include="Resources\Images\not_allowed_symbol.svg" />
+		<MauiIcon Include="Resources\Images\timer.svg" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#041E42" BaseSize="128,128" />
@@ -49,6 +52,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Remove="Resources\Images\dog_paw.svg" />
+	  <MauiImage Remove="Resources\Images\not_allowed_symbol.svg" />
+	  <MauiImage Remove="Resources\Images\timer.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Images\dog_paw.svg" />
+	  <None Remove="Resources\Images\not_allowed_symbol.svg" />
+	  <None Remove="Resources\Images\timer.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="6.1.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />

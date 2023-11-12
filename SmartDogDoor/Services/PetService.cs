@@ -16,10 +16,10 @@ public class PetService
     List<Lock> lockList = new();
     public async Task<List<Pet>> GetPets()
     {
+        //Need to make more async
         try
         {
-            //Pet pet;
-
+            petList.Clear();
 
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = "pet-server.database.windows.net";
@@ -29,14 +29,14 @@ public class PetService
 
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-                Console.WriteLine("\nQuery data example:");
+                Console.WriteLine("\nQuery data:");
                 Console.WriteLine("=========================================\n");
 
                 String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -95,7 +95,7 @@ public class PetService
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -147,14 +147,14 @@ public class PetService
 
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-                Console.WriteLine("\nQuery data example:");
+                Console.WriteLine("\nQuery data:");
                 Console.WriteLine("=========================================\n");
 
                 String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())

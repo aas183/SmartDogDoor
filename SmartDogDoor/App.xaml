@@ -12,6 +12,9 @@
             <Color x:Key="LightBackground">#FAF9F8</Color>
             <Color x:Key="DarkBackground">Black</Color>
 
+            <Color x:Key="In">Green</Color>
+            <Color x:Key="Out">Red</Color>
+
             <Style TargetType="Page" ApplyToDerivedTypes="True">
                 <Setter Property="BackgroundColor"
             Value="{StaticResource LightBackground}" />
@@ -63,6 +66,12 @@
                 <Setter Property="Background" Value="{StaticResource LightBackground}"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="IsClippedToBounds" Value="True"/>
+            </Style>
+
+            <Style TargetType="TabBar">
+                <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource Accent}" />
+                <Setter Property="Shell.TabBarUnselectedColor" Value="White" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

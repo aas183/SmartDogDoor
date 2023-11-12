@@ -51,4 +51,5 @@ public partial class PetViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
 }

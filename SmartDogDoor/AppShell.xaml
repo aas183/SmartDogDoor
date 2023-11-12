@@ -25,15 +25,15 @@
 
     <TabBar>
         <Tab Title="Pets"
-            Icon="doggo.svg">
+            Icon="dog_paw.svg">
             <ShellContent ContentTemplate="{DataTemplate view:MainPage}" />
         </Tab>
         <Tab Title="Activity"
-            Icon="doggo.svg">
+            Icon="timer.svg">
             <ShellContent ContentTemplate="{DataTemplate view:ActivityPage}" />
         </Tab>
-        <Tab Title="Locking"
-            Icon="doggo.svg">
+        <Tab Title="Access"
+            Icon="not_allowed_symbol.svg">
             <ShellContent ContentTemplate="{DataTemplate view:LockPage}" />
         </Tab>
     </TabBar>

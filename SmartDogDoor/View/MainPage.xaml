@@ -1,11 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:model="clr-namespace:SmartDogDoor.Model"
              xmlns:viewmodel="clr-namespace:SmartDogDoor.ViewModel"
              x:DataType="viewmodel:PetViewModel"
              Title="{Binding Title}"
+             Shell.BackgroundColor="{StaticResource Primary}"
              x:Class="SmartDogDoor.View.MainPage">
+
+    <ContentPage.Resources>
+        
+    </ContentPage.Resources>
+
+
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
+    </ContentPage.Behaviors>
 
     <Grid ColumnDefinitions="*,*"
       ColumnSpacing="5"
@@ -27,7 +38,19 @@
                                    HeightRequest="125"/>
                                 <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
                                     <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
-                                    <Label Text="{Binding InOut}" Style="{StaticResource MediumLabel}"/>
+                                    <HorizontalStackLayout>
+                                        <Frame Margin="1"
+                                           BorderColor="Green" 
+                                           BackgroundColor="Green"
+                                           CornerRadius="50"
+                                           HeightRequest="4"
+                                           WidthRequest="4"
+                                           IsClippedToBounds="True"
+                                           HorizontalOptions="Start"
+                                           VerticalOptions="Start">
+                                        </Frame>
+                                        <Label Text="{Binding InOut}" Style="{StaticResource MediumLabel}"/>
+                                    </HorizontalStackLayout>
                                 </VerticalStackLayout>
                             </Grid>
                         </Frame>
@@ -46,6 +69,7 @@
 
         <ActivityIndicator IsVisible="{Binding IsBusy}"
            IsRunning="{Binding IsBusy}"
+           Color="{StaticResource Primary}"
            HorizontalOptions="FillAndExpand"
            VerticalOptions="CenterAndExpand"
            Grid.RowSpan="2"
