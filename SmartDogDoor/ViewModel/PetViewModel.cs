@@ -9,6 +9,7 @@ public partial class PetViewModel : BaseViewModel
     {
         Title = "Pets";
         this.petService = petService;
+        GetPetsAsync();
     }
 
     [RelayCommand]

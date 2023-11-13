@@ -25,8 +25,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<PetService>();
 
         builder.Services.AddSingleton<PetViewModel>();
+        builder.Services.AddTransient<PetDetailsViewModel>();
 
         builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddTransient<DetailsPage>();
 
         return builder.Build();
     }

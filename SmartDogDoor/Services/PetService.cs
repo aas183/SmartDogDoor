@@ -50,10 +50,12 @@ public class PetService
                             if(inOut)
                             {
                                 pet.InOut = "In";
+                                pet.InOutColor = Color.FromRgba("#008450");
                             }
                             else
                             {
                                 pet.InOut = "Out";
+                                pet.InOutColor = Color.FromRgba("#B81D13");
                             }
                             petList.Add(pet);
                             

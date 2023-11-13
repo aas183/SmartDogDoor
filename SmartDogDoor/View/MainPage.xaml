@@ -40,8 +40,8 @@
                                     <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
                                     <HorizontalStackLayout>
                                         <Frame Margin="1"
-                                           BorderColor="Green" 
-                                           BackgroundColor="Green"
+                                           BorderColor="{Binding InOutColor}" 
+                                           BackgroundColor="{Binding InOutColor}"
                                            CornerRadius="50"
                                            HeightRequest="4"
                                            WidthRequest="4"

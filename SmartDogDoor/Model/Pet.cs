@@ -9,4 +9,6 @@ public class Pet
     public string Name { get; set; }
     public string Image { get; set; }
     public string InOut { get; set; }
+    public Color InOutColor { get; set; }
+
 }
