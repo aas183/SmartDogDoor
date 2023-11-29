@@ -1,4 +1,5 @@
-﻿global using CommunityToolkit.Mvvm.ComponentModel;
+﻿//global includes
+global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using SmartDogDoor.Model;
 global using SmartDogDoor.ViewModel;

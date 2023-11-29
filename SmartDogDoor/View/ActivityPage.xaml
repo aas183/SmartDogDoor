@@ -7,4 +7,6 @@
              Title="{Binding Title}"
              x:Class="SmartDogDoor.View.ActivityPage">
 
+       
+    
 </ContentPage>

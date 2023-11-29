@@ -3,15 +3,19 @@ namespace SmartDogDoor.ViewModel;
 
 public partial class PetViewModel : BaseViewModel
 {
-    PetService petService;
-    public ObservableCollection<Pet> Pets { get; } = new();
+    PetService petService;//Object of PetSerivce for getting info from database
+    public ObservableCollection<Pet> Pets { get; } = new();//Data Collection of data from Database
+    
+    //Constructor of ViewModel
     public PetViewModel(PetService petService)
     {
         Title = "Pets";
         this.petService = petService;
-        GetPetsAsync();
+        //GetPetsAsync();
     }
 
+
+    //Not Fully Implemented but function from going to pet info page to indivdual pet pages
     [RelayCommand]
     async Task GoToDetailsAsync(Pet pet)
     {
@@ -25,23 +29,26 @@ public partial class PetViewModel : BaseViewModel
             });
     }
 
+    //Get Details from pet Information Page
     [RelayCommand]
     async Task GetPetsAsync ()
     {
+        //If data pull is already occurring quit
         if(IsBusy) return;
+
 
         try
         {
             IsBusy = true;
-            var pets = await petService.GetPets();
+            var pets = await petService.GetPets();//Get pets
 
-            if(Pets.Count != 0)
+            if(Pets.Count != 0)//clear pet list if full
                 Pets.Clear();
 
-            foreach (var pet in pets)
+            foreach (var pet in pets)//update pet list from service call
                 Pets.Add(pet);
         }
-        catch (Exception ex)
+        catch (Exception ex)//if error
         {
             Debug.WriteLine(ex);
             await Shell.Current.DisplayAlert("Error!",
@@ -49,7 +56,7 @@ public partial class PetViewModel : BaseViewModel
         }
         finally
         {
-            IsBusy = false;
+            IsBusy = false;//set busy back to false
         }
     }
 

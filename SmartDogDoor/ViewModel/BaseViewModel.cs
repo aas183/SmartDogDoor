@@ -9,10 +9,10 @@ public partial class BaseViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-    bool isBusy;
+    bool isBusy;//For keeping track if app is busy
 
     [ObservableProperty]
-    string title;
+    string title;//for title of each page
 
     public bool IsNotBusy => !IsBusy;
 }

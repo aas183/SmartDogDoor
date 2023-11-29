@@ -32,7 +32,7 @@ public class PetService
                 Console.WriteLine("\nQuery data:");
                 Console.WriteLine("=========================================\n");
 
-                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
+                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Information_Table";
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {

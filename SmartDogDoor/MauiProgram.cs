@@ -20,6 +20,7 @@ public static class MauiProgram
             });
 
 #if DEBUG
+        //Build pages
         builder.Logging.AddDebug();
 #endif  
         builder.Services.AddSingleton<PetService>();
