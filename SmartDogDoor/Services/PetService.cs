@@ -4,49 +4,59 @@ using System;
 using Microsoft.Data.SqlClient;
 using System.Text;
 
-
+//Class for accessing outside data from pet server
 public class PetService
 { 
     public PetService()
     {
     }
 
+    //Lists for entries from database tables
     List<Pet> petList = new ();
     List<PetActivity> petActivityList = new();
     List<Lock> lockList = new();
+
+    //Function to get data from Pet Information Database Table
     public async Task<List<Pet>> GetPets()
     {
-        //Need to make more async
+        //Note: Need to make more async
         try
         {
-            petList.Clear();
+            petList.Clear();//clear current pet list
 
+            //Create connection string to database
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = "pet-server.database.windows.net";
             builder.UserID = "drewshetler";
             builder.Password = "DT01-Dog-D00r";
             builder.InitialCatalog = "Pet-Database";
 
-            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))//use connection object
             {
                 Console.WriteLine("\nQuery data:");
                 Console.WriteLine("=========================================\n");
 
-                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Information_Table";
+                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Information_Table";//selection from database
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    await connection.OpenAsync();
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    await connection.OpenAsync();//connect to database
+
+                    using (SqlDataReader reader = command.ExecuteReader())//use reader object 
                     {
-                        while (reader.Read())
+                        while (reader.Read())//read until NULL entry in database
                         {
+                            //Create new Pet Object
                             Pet pet = new Pet();
                             //Console.WriteLine(reader.GetString(0));
+                            
+                            //Store variables from database in pet object members
                             pet.Id = Convert.ToString(reader.GetInt64(0));
                             pet.Name = reader.GetString(1);
                             pet.Image = reader.GetString(2);
                             bool inOut = reader.GetBoolean(3);
+                      
+                            //set inOut memeber variables
                             if(inOut)
                             {
                                 pet.InOut = "In";
@@ -57,7 +67,7 @@ public class PetService
                                 pet.InOut = "Out";
                                 pet.InOutColor = Color.FromRgba("#B81D13");
                             }
-                            petList.Add(pet);
+                            petList.Add(pet);//add pet to list of pets
                             
                             Console.WriteLine("{0} {1} {2} {3}", pet.Id, pet.Name, pet.Image, pet.InOut);
                         }
@@ -75,6 +85,8 @@ public class PetService
         
     }
 
+    //Not Completed
+    //Function for getting entries from Pet Activity database table.
     public async Task<List<PetActivity>> GetPetActvities()
     {
         try
@@ -134,6 +146,8 @@ public class PetService
 
     }
 
+    //Not Completed
+    //Function for getting entries from locking restriction database table.
     public async Task<List<Lock>> GetLocks()
     {
         try
