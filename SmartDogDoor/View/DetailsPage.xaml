@@ -3,4 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Smart_Dog_Door_App.Maui.DetailsPage">
 
+        
+        <!-- Display Pet Information and Pet Activity Data for Selected pet form Main Page-->
+    
 </ContentPage>

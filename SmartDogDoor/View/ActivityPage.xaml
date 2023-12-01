@@ -7,6 +7,6 @@
              Title="{Binding Title}"
              x:Class="SmartDogDoor.View.ActivityPage">
 
-       
-    
+        <!-- Display Pet Activity Information and allow user to filter activity-->
+
 </ContentPage>

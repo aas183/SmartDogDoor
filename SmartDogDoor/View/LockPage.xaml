@@ -7,4 +7,6 @@
              Title="{Binding Title}"
              x:Class="SmartDogDoor.View.LockPage">
 
+        <!-- Display locking restriction information and allow user to add or delete locking restrictions-->
+
 </ContentPage>

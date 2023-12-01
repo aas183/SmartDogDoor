@@ -85,6 +85,20 @@ public class PetService
         
     }
 
+    /*
+    public async Task<List<Pet>> addPet()
+    {
+        
+    }
+    */
+
+    /*
+    public async Task<List<Pet>> deletePet()
+    {
+        
+    }
+    */
+
     //Not Completed
     //Function for getting entries from Pet Activity database table.
     public async Task<List<PetActivity>> GetPetActvities()
@@ -209,13 +223,26 @@ public class PetService
 
     }
 
+    /*
+    public async Task<List<Pet>> addLock()
+    {
+        
+    }
+    */
+
+    /*
+    public async Task<List<Pet>> deleteLock()
+    {
+        
+    }
+    */
 
 
     /*
     if(petList?.Count >  0) 
         return petList;
 
-    var url = "https://montemagno.com/monkeys.json";
+    var url = "";
 
     var response = await httpClient.GetAsync(url);
     //use asynce for webapi calls

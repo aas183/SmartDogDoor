@@ -41,4 +41,11 @@ public partial class ActivityViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    /*
+    async Task filterActivity(string time_pet, string petID)
+    {
+
+    }
+    */
 }

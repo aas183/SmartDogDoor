@@ -41,4 +41,18 @@ public partial class LockViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    /*
+    async Task addRestriction(string restriction, bool lockUnlock )
+    {
+
+    }
+    */
+
+    /*
+    async Task deleteRestriction(string restriction)
+    {
+
+    }
+    */
 }
