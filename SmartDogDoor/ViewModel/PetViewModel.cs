@@ -60,4 +60,26 @@ public partial class PetViewModel : BaseViewModel
         }
     }
 
+    /*
+    async Task addPetsAsync()
+    {
+        //Display a alert box saying do you want to add pet? Options are Yes or no
+
+        //If no 
+            //quit 
+        //If yes 
+            //call pet service to add row to database that with generic pet name ie. Pet_3
+            //and no image and no id and InOut of in
+
+        //After prompt user to hold new RFID tag to door
+
+        //Wait for 1 minute and doing so continously check database to see if new row has id populated from dog door end
+
+        //If it is populated 
+            //tell the user the pet was successfully added to system update view
+        //If not 
+            //tell user pet addition was unsuccessful then call pet service to delete pet entry
+    }
+    */
+
 }
