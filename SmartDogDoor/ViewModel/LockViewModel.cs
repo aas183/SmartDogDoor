@@ -56,6 +56,8 @@ public partial class LockViewModel : BaseViewModel
     /*
     async Task deleteRestriction(Lock lock)
     {
+        //Prompt the user "Are you sure you want to delete the locking restriction?" (yes/no)
+
         //call pet service deleteLock with the passed Lock object
         //this will delete entry in table
 

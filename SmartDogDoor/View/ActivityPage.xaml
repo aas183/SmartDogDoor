@@ -8,5 +8,8 @@
              x:Class="SmartDogDoor.View.ActivityPage">
 
         <!-- Display Pet Activity Information and allow user to filter activity-->
+    
+        <!-- Top of Page have dropdown box to let the user filter activity by pet or time-->
+        <!--Display Activity Information in Card View Similar to MainPage-->
 
 </ContentPage>

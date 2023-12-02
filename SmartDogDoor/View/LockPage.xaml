@@ -8,5 +8,15 @@
              x:Class="SmartDogDoor.View.LockPage">
 
         <!-- Display locking restriction information and allow user to add or delete locking restrictions-->
+    
+        <!-- Display looking restrictions in boxes-->
+        <!-- Besides each box have a button for restriction deletetion-->
+        
+        <!--After all restrictions have a button for restriction addition-->
+        <!--When press display a dropdown box for day, and two edit boxes one for hour and one for minute for start time-->
+        <!-- Display a dropdown box for day, and two edit boxes one for hour and one for minute for end time-->
+        <!-- Display a dropdown box for whether the restriciton is for door lock or unlock-->
+        <!-- Have a button to save the new restriction-->
+    
 
 </ContentPage>
