@@ -88,14 +88,24 @@ public class PetService
     /*
     public async Task<List<Pet>> addPet()
     {
-        
+        //connect to database
+
+        //read number of entries in pet information database table
+
+        //add a new row to database table and make the pet name Pet<numofPets+1> and make in
+
     }
     */
 
     /*
-    public async Task<List<Pet>> deletePet()
+    public async Task<List<Pet>> deletePet(string id)
     {
-        
+        //connect to database
+
+        //read number of entries in pet information database table
+
+        //add find row with passed id in pet information database table and delete pet
+        //find enetires in pet activty database table with passed id and delete them
     }
     */
 
@@ -224,16 +234,21 @@ public class PetService
     }
 
     /*
-    public async Task<List<Pet>> addLock()
+    public async Task<List<Pet>> addLock(string timeStart, string timeStop, bool lockUnlock)
     {
-        
+        //connect to database
+
+        //add entry to locking restriction database table with passed parameters
+
     }
     */
 
     /*
-    public async Task<List<Pet>> deleteLock()
+    public async Task<List<Pet>> deleteLock(Lock lock)
     {
-        
+        //connect to database
+
+        //delete entry of locking restriction database table with has entires same as the members of passed Lock object
     }
     */
 

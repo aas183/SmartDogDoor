@@ -43,9 +43,16 @@ public partial class ActivityViewModel : BaseViewModel
     }
 
     /*
-    async Task filterActivity(string time_pet, string petID)
+    async Task filterActivity(bool time_pet, string petID)
     {
+        //call pet service to update Activities obserable collection
 
+        //check time_pet bool
+        //If 1 time filter activited
+            //sort entries in oberable collection by most recent time first
+        //If 0 pet name selected;
+            //look through obervable collection and delete entries that do not have the passed petID
+            //sort entries by most recent activity first
     }
     */
 }
