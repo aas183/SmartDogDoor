@@ -68,7 +68,7 @@ public partial class PetViewModel : BaseViewModel
         //If no 
             //quit 
         //If yes 
-            //call pet service to add row to database that with generic pet name ie. Pet_3
+            //call pet service, addPet(), to add row to database that with generic pet name ie. Pet_3
             //and no image and no id and InOut of in
 
         //After prompt user to hold new RFID tag to door
@@ -78,7 +78,7 @@ public partial class PetViewModel : BaseViewModel
         //If it is populated 
             //tell the user the pet was successfully added to system update view
         //If not 
-            //tell user pet addition was unsuccessful then call pet service to delete pet entry
+            //tell user pet addition was unsuccessful then call pet service, deletePet(), to delete pet entry
     }
     */
 

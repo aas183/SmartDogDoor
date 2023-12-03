@@ -45,10 +45,10 @@ public partial class LockViewModel : BaseViewModel
     /*
     async Task addRestriction(string timeStart, string timeStop, bool lockUnlock )
     {
-        //call pet service addLock with the passed parameters
+        //call pet service, addLock(), with the passed parameters
         //this will add entry in table
 
-        //call pet service getLocks to update observable collection, which will update the page
+        //call pet service, getLocks(), to update observable collection, which will update the page_
  
     }
     */
@@ -58,10 +58,10 @@ public partial class LockViewModel : BaseViewModel
     {
         //Prompt the user "Are you sure you want to delete the locking restriction?" (yes/no)
 
-        //call pet service deleteLock with the passed Lock object
+        //call pet service, deleteLock(), with the passed Lock object
         //this will delete entry in table
 
-        //call pet service getLocks to update observable collection, which will update the page
+        //call pet service, getLocks(), to update observable collection, which will update the page
     }
     */
 }

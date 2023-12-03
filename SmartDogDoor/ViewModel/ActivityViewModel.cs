@@ -45,7 +45,7 @@ public partial class ActivityViewModel : BaseViewModel
     /*
     async Task filterActivity(bool time_pet, string petID)
     {
-        //call pet service to update Activities obserable collection
+        //call pet service, getPetActivities(), to update Activities obserable collection
 
         //check time_pet bool
         //If 1 time filter activited

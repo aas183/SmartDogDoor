@@ -86,7 +86,7 @@ public class PetService
     }
 
     /*
-    public async Task<List<Pet>> addPet()
+    public async void addPet()
     {
         //connect to database
 
@@ -98,7 +98,7 @@ public class PetService
     */
 
     /*
-    public async Task<List<Pet>> deletePet(string id)
+    public async void deletePet(string id)
     {
         //connect to database
 
@@ -106,6 +106,62 @@ public class PetService
 
         //add find row with passed id in pet information database table and delete pet
         //find enetires in pet activty database table with passed id and delete them
+    }
+    */
+
+    /*
+   public async void changePetName(string id, string name)
+   {
+       //connect to database
+
+       //find entry in pet information database table with passed id
+
+       //change found entry with passed id's name to passed name
+   }
+   */
+
+    /*
+    public async string addPetImage(image img)
+    {
+        //connect to Blob storage
+
+        //add upload passed image into blob storage
+
+        //return URL
+    }
+    */
+
+    /*
+    public async string addPetImageDatabase(string URL, string Id)
+    {
+        //connect to database
+
+        //find entry in pet information database table with passed id
+
+        //change found entry with passed id's image link to passed URL
+    }
+    */
+
+    /*
+    public async void deletePetImages(string ID)
+    {
+        //connect to database and Blob storage
+
+        //search pet information database table and pet activity database table for all entries for passed ID and get all 
+        //entries image URLs
+
+        //Using URL for images go into blob storage and delete all images with the receieved URLS
+    }
+    */
+
+    /*
+    public async string deletePetImage(string URL)
+    {
+        //connect to Blob storage
+
+        //delete image entry with passed URL
+
+        //return old image URL
     }
     */
 
@@ -234,7 +290,7 @@ public class PetService
     }
 
     /*
-    public async Task<List<Pet>> addLock(string timeStart, string timeStop, bool lockUnlock)
+    public async void addLock(string timeStart, string timeStop, bool lockUnlock)
     {
         //connect to database
 
@@ -244,7 +300,7 @@ public class PetService
     */
 
     /*
-    public async Task<List<Pet>> deleteLock(Lock lock)
+    public async void deleteLock(Lock lock)
     {
         //connect to database
 
