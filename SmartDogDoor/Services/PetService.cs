@@ -92,7 +92,7 @@ public class PetService
 
         //read number of entries in pet information database table
 
-        //add a new row to database table and make the pet name Pet<numofPets+1> and make in
+        //add a new row to database table and make the pet name Pet<numofPets+1> and make inOut True
 
     }
     */
@@ -105,7 +105,7 @@ public class PetService
         //read number of entries in pet information database table
 
         //add find row with passed id in pet information database table and delete pet
-        //find enetires in pet activty database table with passed id and delete them
+        //find entries in pet activity database table with passed id and delete them
     }
     */
 
@@ -150,7 +150,7 @@ public class PetService
         //search pet information database table and pet activity database table for all entries for passed ID and get all 
         //entries image URLs
 
-        //Using URL for images go into blob storage and delete all images with the receieved URLS
+        //Using URL for images go into blob storage and delete all images with the received URLS
     }
     */
 

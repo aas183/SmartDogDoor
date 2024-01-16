@@ -43,7 +43,7 @@ public partial class LockViewModel : BaseViewModel
     }
 
     /*
-    async Task addRestriction(string timeStart, string timeStop, bool lockUnlock )
+    async Task addRestrictionAsync(string timeStart, string timeStop, bool lockUnlock )
     {
         //call pet service, addLock(), with the passed parameters
         //this will add entry in table
@@ -54,7 +54,7 @@ public partial class LockViewModel : BaseViewModel
     */
 
     /*
-    async Task deleteRestriction(Lock lock)
+    async Task deleteRestrictionAsync(Lock lock)
     {
         //Prompt the user "Are you sure you want to delete the locking restriction?" (yes/no)
 

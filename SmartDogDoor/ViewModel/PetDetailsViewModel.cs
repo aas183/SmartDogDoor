@@ -29,21 +29,21 @@ public partial class PetDetailsViewModel : BaseViewModel
     /*
    async Task changePetNameAsync(string name, string petID)
    {
-       //call pet service and change name of pet in pet information databaser table entry with passed petID
+       //call pet service function chnagePetName() to change name of pet in pet information database table entry with passed petID
    }
 
    async Task changePetImageAsync(image, string petID)
    {
-       //User will pick an image using xaml file picker and pass it to this function
+       //User will pick an image using XMAL file picker and pass it to this function
        
        //change image name to Profile_<petID>.<extension>
 
-       //call pet service to upload image to Azure Blob Storage and return image URL
+       //call pet services, addPetImage() to upload image to Azure Blob Storage and return image URL
 
-       //call pet serices, addPetImage(),service with image URL and petID to put image URL in pet information database table entry with passed petID
+       //call pet services, addPetImageDatabase(), with image URL and petID to put image URL in pet information database table entry with passed petID
        //returns URL
 
-       //call pet services, deletePetImage() with returned URL from addPetImage() call, to delete old pet profile imaage if it exists
+       //call pet services, deletePetImage() with returned URL from addPetImage() call, to delete old pet profile image if it exists
     }
    */
 }

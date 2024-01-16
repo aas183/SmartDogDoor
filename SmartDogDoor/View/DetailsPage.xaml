@@ -1,10 +1,43 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Smart_Dog_Door_App.Maui.DetailsPage">
+             x:Class="SmartDogDoor.DetailsPage"
+             xmlns:viewmodel="clr-namespace:SmartDogDoor.ViewModel"
+             x:DataType="viewmodel:PetDetailsViewModel"
+             Title="{Binding Pet.Name}">
 
-        
-        <!-- Display Pet Information and Pet Activity Data for Selected pet form Main Page-->
+
+    <ScrollView>
+        <Grid ColumnDefinitions="*,Auto,*"
+                      RowDefinitions="160, Auto">
+
+                <BoxView BackgroundColor="{StaticResource Primary}"
+                             Grid.ColumnSpan="3"
+                             HeightRequest="160"
+                             HorizontalOptions="FillAndExpand"/>
+
+                <Frame Grid.RowSpan="2"
+                           Grid.Column="1"
+                           HeightRequest="160"
+                           WidthRequest="160"
+                           CornerRadius="80"
+                           HorizontalOptions="Center"
+                           IsClippedToBounds="True"
+                           Padding="0"
+                           Margin="0,80,0,0">
+
+                    <Image Aspect="AspectFill"
+                               HeightRequest="160"
+                               WidthRequest="160"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Source="{Binding Pet.Image}"/>
+                </Frame>
+            </Grid>
+    </ScrollView>
+
+
+    <!-- Display Pet Information and Pet Activity Data for Selected pet form Main Page-->
     
         <!-- Title of page will be the pet's name-->
         <!--Display Picture of Pet At top center of Page with its information below, such as status and activiy-->
