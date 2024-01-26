@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartDogDoor.View.ActivityPage"
              xmlns:model="clr-namespace:SmartDogDoor.Model"
              xmlns:viewmodel="clr-namespace:SmartDogDoor.ViewModel"
              x:DataType="viewmodel:ActivityViewModel"
              Title="{Binding Title}"
-             x:Class="SmartDogDoor.View.ActivityPage">
+             Shell.BackgroundColor="{StaticResource Primary}">
+             
 
         <!-- Display Pet Activity Information and allow user to filter activity-->
     

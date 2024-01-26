@@ -2,7 +2,7 @@
 
 public partial class DetailsPage : ContentPage
 {
-   /* public DetailsPage(MonkeyDetailsViewModel viewModel)
+    public DetailsPage(PetDetailsViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;
@@ -12,5 +12,5 @@ public partial class DetailsPage : ContentPage
     {
         base.OnNavigatedTo(args);
     }
-   */
+   
 }

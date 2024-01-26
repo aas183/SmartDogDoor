@@ -4,6 +4,7 @@
              x:Class="SmartDogDoor.DetailsPage"
              xmlns:viewmodel="clr-namespace:SmartDogDoor.ViewModel"
              x:DataType="viewmodel:PetDetailsViewModel"
+             Shell.BackgroundColor="{StaticResource Primary}"
              Title="{Binding Pet.Name}">
 
 
@@ -13,10 +14,10 @@
 
                 <BoxView BackgroundColor="{StaticResource Primary}"
                              Grid.ColumnSpan="3"
-                             HeightRequest="160"
+                             HeightRequest="180"
                              HorizontalOptions="FillAndExpand"/>
 
-                <Frame Grid.RowSpan="2"
+            <Frame Grid.RowSpan="2"
                            Grid.Column="1"
                            HeightRequest="160"
                            WidthRequest="160"
@@ -24,16 +25,16 @@
                            HorizontalOptions="Center"
                            IsClippedToBounds="True"
                            Padding="0"
-                           Margin="0,80,0,0">
-
-                    <Image Aspect="AspectFill"
+                           Margin="0,0,0,0">
+                
+                <Image Aspect="AspectFill"
                                HeightRequest="160"
                                WidthRequest="160"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"
                                Source="{Binding Pet.Image}"/>
-                </Frame>
-            </Grid>
+            </Frame>
+        </Grid>
     </ScrollView>
 
 

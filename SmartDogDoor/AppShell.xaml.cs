@@ -1,10 +1,11 @@
-﻿namespace SmartDogDoor
+﻿namespace SmartDogDoor;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+
+        Routing.RegisterRoute(nameof(DetailsPage), typeof(DetailsPage));
     }
 }
