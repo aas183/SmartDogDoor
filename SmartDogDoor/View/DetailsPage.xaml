@@ -1,43 +1,83 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SmartDogDoor.DetailsPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:SmartDogDoor.ViewModel"
+             xmlns:model="clr-namespace:SmartDogDoor.Model"
              x:DataType="viewmodel:PetDetailsViewModel"
              Shell.BackgroundColor="{StaticResource Primary}"
-             Title="{Binding Pet.Name}">
-
-
+             Title="{Binding Pet.Name}"
+             x:Class="SmartDogDoor.View.DetailsPage">
+    
     <ScrollView>
-        <Grid ColumnDefinitions="*,Auto,*"
-                      RowDefinitions="160, Auto">
+        <StackLayout>
+            <Grid ColumnDefinitions="*,Auto,*" RowDefinitions="160, Auto">
 
                 <BoxView BackgroundColor="{StaticResource Primary}"
-                             Grid.ColumnSpan="3"
-                             HeightRequest="180"
-                             HorizontalOptions="FillAndExpand"/>
+                     Grid.ColumnSpan="3"
+                     HeightRequest="180"
+                     HorizontalOptions="FillAndExpand"/>
 
-            <Frame Grid.RowSpan="2"
-                           Grid.Column="1"
-                           HeightRequest="160"
-                           WidthRequest="160"
-                           CornerRadius="80"
-                           HorizontalOptions="Center"
-                           IsClippedToBounds="True"
-                           Padding="0"
-                           Margin="0,0,0,0">
-                
-                <Image Aspect="AspectFill"
-                               HeightRequest="160"
-                               WidthRequest="160"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               Source="{Binding Pet.Image}"/>
-            </Frame>
-        </Grid>
+                    <Frame Grid.RowSpan="2"
+                   Grid.Column="1"
+                   HeightRequest="160"
+                   WidthRequest="160"
+                   CornerRadius="80"
+                   HorizontalOptions="Center"
+                   IsClippedToBounds="True"
+                   Padding="0"
+                   Margin="0,0,0,0">
+
+                        <Image Aspect="AspectFill"
+                       HeightRequest="160"
+                       WidthRequest="160"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Source="{Binding Pet.Image}"/>
+                    </Frame>    
+            </Grid>
+        <CollectionView BackgroundColor="Transparent"
+             Grid.ColumnSpan="2"
+             ItemsSource="{Binding PetActivities}"
+             SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:PetActivity">
+                        <!-- Bind Pet Model to View-->
+                        <Grid Padding="10">
+                            <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
+                                <Grid Padding="0" ColumnDefinitions="125,*">
+                                    <Image Aspect="AspectFill"
+                            Source="{Binding Image}"
+                            WidthRequest="125"
+                            HeightRequest="125"/>
+                                    <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
+                                        <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
+                                        <HorizontalStackLayout>
+                                            <Frame Margin="1"
+                                    BorderColor="{Binding InOutColor}" 
+                                    BackgroundColor="{Binding InOutColor}"
+                                    CornerRadius="50"
+                                    HeightRequest="4"
+                                    WidthRequest="4"
+                                    IsClippedToBounds="True"
+                                    HorizontalOptions="Start"
+                                    VerticalOptions="Start">
+                                            </Frame>
+                                            <Label Text="{Binding InOut}" Style="{StaticResource MediumLabel}"/>
+                                            <Label Text="{Binding TimeStamp}" Style="{StaticResource MediumLabel}"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
     </ScrollView>
+   
 
-
+   
     <!-- Display Pet Information and Pet Activity Data for Selected pet form Main Page-->
     
         <!-- Title of page will be the pet's name-->

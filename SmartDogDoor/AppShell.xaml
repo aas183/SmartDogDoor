@@ -37,11 +37,11 @@
             <ShellContent ContentTemplate="{DataTemplate view:LockPage}" />
         </Tab>
     </TabBar>
-
+<!--
     <ShellContent
         Shell.NavBarIsVisible="true"
         Title="Home"
         ContentTemplate="{DataTemplate view:MainPage}"
         Route="MainPage" />
-
+-->
 </Shell>

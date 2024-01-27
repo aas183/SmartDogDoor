@@ -22,8 +22,8 @@ public partial class ActivityViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            var activities = await petService.GetPetActvities();
-
+            var activities = await petService.GetPetActivities();
+            
             if(Activities.Count != 0)
                 Activities.Clear();
 

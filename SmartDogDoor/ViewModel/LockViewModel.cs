@@ -9,7 +9,7 @@ public partial class LockViewModel : BaseViewModel
     public ObservableCollection<Lock> Locks { get; } = new();
     public LockViewModel(PetService petService)
     {
-        Title = "Lock Restrictions";
+        Title = "Access";
         this.petService = petService;
     }
 

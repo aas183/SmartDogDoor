@@ -1,4 +1,4 @@
-﻿namespace SmartDogDoor;
+﻿namespace SmartDogDoor.View;
 
 public partial class DetailsPage : ContentPage
 {

@@ -22,7 +22,7 @@ public partial class PetViewModel : BaseViewModel
         if (pet is null)
             return;
 
-        await Shell.Current.GoToAsync($"{nameof(DetailsPage)}", true, 
+        await Shell.Current.GoToAsync($"{nameof(View.DetailsPage)}", true, 
             new Dictionary<string, object>
             {
                 {"Pet", pet }

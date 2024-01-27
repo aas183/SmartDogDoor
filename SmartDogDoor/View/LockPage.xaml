@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:model="clr-namespace:SmartDogDoor.Model"
              xmlns:viewmodel="clr-namespace:SmartDogDoor.ViewModel"
              x:DataType="viewmodel:LockViewModel"
              Title="{Binding Title}"
+             Shell.BackgroundColor="{StaticResource Primary}"
              x:Class="SmartDogDoor.View.LockPage">
 
         <!-- Display locking restriction information and allow user to add or delete locking restrictions-->

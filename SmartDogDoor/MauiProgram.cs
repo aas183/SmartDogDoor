@@ -27,9 +27,13 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<PetViewModel>();
         builder.Services.AddTransient<PetDetailsViewModel>();
+        builder.Services.AddSingleton<ActivityViewModel>();
+        builder.Services.AddSingleton<LockViewModel>();
 
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddTransient<DetailsPage>();
+        builder.Services.AddSingleton<ActivityPage>();
+        builder.Services.AddSingleton<LockPage>();
 
         return builder.Build();
     }

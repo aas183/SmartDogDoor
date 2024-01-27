@@ -1,16 +1,10 @@
-﻿namespace SmartDogDoor;
+﻿namespace SmartDogDoor.View;
 
 public partial class LockPage : ContentPage
 {
-    /* public DetailsPage(MonkeyDetailsViewModel viewModel)
+     public LockPage(LockViewModel viewModel)
      {
          InitializeComponent();
          BindingContext = viewModel;
      }
-
-     protected override void OnNavigatedTo(NavigatedToEventArgs args)
-     {
-         base.OnNavigatedTo(args);
-     }
-    */
 }

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System;
 using Microsoft.Data.SqlClient;
 using System.Text;
+using Azure.Storage.Blobs;
 
 //Class for accessing outside data from pet server
 public class PetService
@@ -131,6 +132,23 @@ public class PetService
     }
     */
 
+    public static async Task UploadFromBinaryDataAsync(BlobContainerClient containerClient, string localFilePath)
+    {
+        string fileName = Path.GetFileName(localFilePath);
+        BlobClient blobClient = containerClient.GetBlobClient(fileName);
+
+        FileStream fileStream = File.OpenRead(localFilePath);
+        BinaryReader reader = new BinaryReader(fileStream);
+
+        byte[] buffer = new byte[fileStream.Length];
+        reader.Read(buffer, 0, buffer.Length);
+        BinaryData binaryData = new BinaryData(buffer);
+
+        await blobClient.UploadAsync(binaryData, true);
+
+        fileStream.Close();
+    }
+
     /*
     public async string addPetImageDatabase(string URL, string Id)
     {
@@ -167,7 +185,7 @@ public class PetService
 
     //Not Completed
     //Function for getting entries from Pet Activity database table.
-    public async Task<List<PetActivity>> GetPetActvities()
+    public async Task<List<PetActivity>> GetPetActivities()
     {
         try
         {

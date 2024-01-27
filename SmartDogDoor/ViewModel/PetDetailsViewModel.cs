@@ -1,18 +1,52 @@
-﻿
+﻿using SmartDogDoor.Services;
 namespace SmartDogDoor.ViewModel;
 
 [QueryProperty("Pet", "Pet")]
 public partial class PetDetailsViewModel : BaseViewModel
 {
-    public PetDetailsViewModel()
+
+    PetService petService;//Object of PetSerivce for getting info from database
+    public ObservableCollection<PetActivity> PetActivities { get; } = new();//Data Collection of data from Database
+    public PetDetailsViewModel(PetService petService)
     {
-        
-       
+
+        this.petService = petService;
     }
 
     [ObservableProperty]
     Pet pet;
 
+
+    //Get Details from pet Information Page
+    [RelayCommand]
+    async Task GetPetsAsync()
+    {
+        //If data pull is already occurring quit
+        if (IsBusy) return;
+
+
+        try
+        {
+            IsBusy = true;
+            var activities = await petService.GetPetActivities();//Get pets
+
+            if (PetActivities.Count != 0)//clear pet list if full
+                PetActivities.Clear();
+
+            foreach (var activity in activities)//update pet list from service call
+                PetActivities.Add(activity);
+        }
+        catch (Exception ex)//if error
+        {
+            Debug.WriteLine(ex);
+            await Shell.Current.DisplayAlert("Error!",
+                $"Unable to get pets: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsBusy = false;//set busy back to false
+        }
+    }
     /*
     async Task deletePetsAsync(string Id)
     {
