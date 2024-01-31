@@ -19,27 +19,51 @@
                      HorizontalOptions="FillAndExpand"/>
 
                     <Frame Grid.RowSpan="2"
-                   Grid.Column="1"
-                   HeightRequest="160"
-                   WidthRequest="160"
-                   CornerRadius="80"
-                   HorizontalOptions="Center"
-                   IsClippedToBounds="True"
-                   Padding="0"
-                   Margin="0,0,0,0">
-
-                        <Image Aspect="AspectFill"
+                       Grid.Column="1"
                        HeightRequest="160"
                        WidthRequest="160"
+                       CornerRadius="80"
                        HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       Source="{Binding Pet.Image}"/>
+                       IsClippedToBounds="True"
+                       Padding="0"
+                       Margin="0,0,0,0">
+
+                        <Image Aspect="AspectFill"
+                           HeightRequest="160"
+                           WidthRequest="160"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Source="{Binding Pet.Image}"/>
                     </Frame>    
             </Grid>
-        <CollectionView BackgroundColor="Transparent"
-             Grid.ColumnSpan="2"
-             ItemsSource="{Binding PetActivities}"
-             SelectionMode="None">
+            <Button
+               BackgroundColor="{StaticResource Accent}"
+               HeightRequest="30"
+               WidthRequest="30"
+               CornerRadius="10"
+               HorizontalOptions="End"
+               Padding="0"
+               Margin="0,-22,1,0"
+               Clicked="editPetInfo"
+               ImageSource="edit.svg"
+            />
+
+            <Grid x:Name="Edit" IsVisible="False" ColumnDefinitions="*,100,*" RowDefinitions="Auto, Auto, 320" RowSpacing="40" ColumnSpacing="10" Padding="5">
+                <Label Grid.Column="0" Grid.Row="0" Text="Pet Name:" TextColor="Black" Padding="0" Margin="0,0,0,0" VerticalTextAlignment="Center"/>
+                <Entry Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0"  Margin="0,0,0,0" VerticalTextAlignment="Center"/>
+
+                <Label Grid.Column="0" Grid.Row="1" Text="Pet Image:" TextColor="Black" VerticalTextAlignment="Center"/>
+                <Button Grid.Column="1" Grid.Row="1" Text="File" TextColor="White" BackgroundColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                <Label Grid.Column="2" Grid.Row="1" Text="" TextColor="Black" VerticalTextAlignment="Center"/>
+
+                <Button Grid.Column="0" Grid.Row="2" Text="Save" TextColor="{StaticResource Primary}" Clicked="saveInfo" BackgroundColor="{StaticResource Accent}" BorderWidth="1" BorderColor="{StaticResource Primary}" VerticalOptions="End"/>
+                <Button Grid.Column="2" Grid.Row="2" Text="Cancel" TextColor="{StaticResource Primary}" Clicked="cancelInfo" BackgroundColor="{StaticResource Accent}" BorderWidth="1" BorderColor="{StaticResource Primary}"  VerticalOptions="End"/>
+            </Grid>
+          
+            <CollectionView x:Name="Activity" IsVisible="True" BackgroundColor="Transparent"
+                 Grid.ColumnSpan="2"
+                 ItemsSource="{Binding PetActivities}"
+                 SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:PetActivity">
                         <!-- Bind Pet Model to View-->

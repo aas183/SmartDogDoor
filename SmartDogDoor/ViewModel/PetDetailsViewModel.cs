@@ -99,9 +99,8 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            // The user canceled or something went wrong
-        }
 
-        return null;
+            return null; // The user canceled or something went wrong
+        }
     }
 }

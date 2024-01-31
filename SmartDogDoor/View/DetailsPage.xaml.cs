@@ -12,5 +12,22 @@ public partial class DetailsPage : ContentPage
     {
         base.OnNavigatedTo(args);
     }
-   
+
+    private void editPetInfo(object sender, EventArgs e)
+    {
+        Activity.IsVisible = false;
+        Edit.IsVisible = true;
+    }
+
+    private void saveInfo(object sender, EventArgs e)
+    {
+        Activity.IsVisible = true;
+        Edit.IsVisible = false;
+    }
+
+    private void cancelInfo(object sender, EventArgs e)
+    {
+        Activity.IsVisible = true;
+        Edit.IsVisible = false;
+    }
 }
