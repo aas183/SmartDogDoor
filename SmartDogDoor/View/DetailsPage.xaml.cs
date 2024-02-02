@@ -17,17 +17,20 @@ public partial class DetailsPage : ContentPage
     {
         Activity.IsVisible = false;
         Edit.IsVisible = true;
+        deleteBtn.IsVisible = true;
     }
 
     private void saveInfo(object sender, EventArgs e)
     {
         Activity.IsVisible = true;
         Edit.IsVisible = false;
+        deleteBtn.IsVisible = false;
     }
 
     private void cancelInfo(object sender, EventArgs e)
     {
         Activity.IsVisible = true;
         Edit.IsVisible = false;
+        deleteBtn.IsVisible= false;
     }
 }

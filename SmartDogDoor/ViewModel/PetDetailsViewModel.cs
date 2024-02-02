@@ -16,7 +16,6 @@ public partial class PetDetailsViewModel : BaseViewModel
     [ObservableProperty]
     Pet pet;
 
-
     //Get Details from pet Information Page
     [RelayCommand]
     async Task GetPetsAsync()
@@ -80,7 +79,9 @@ public partial class PetDetailsViewModel : BaseViewModel
        //call pet services, deletePetImage() with returned URL from addPetImage() call, to delete old pet profile image if it exists
     }
    */
-    public async Task<FileResult> PickImage(PickOptions options)
+    //User Picks Image From System
+    [RelayCommand]
+    async Task<FileResult> PickImage(PickOptions options)
     {
         try
         {
