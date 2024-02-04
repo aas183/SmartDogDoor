@@ -1,4 +1,6 @@
 ﻿using SmartDogDoor.Services;
+using SmartDogDoor.View;
+
 namespace SmartDogDoor.ViewModel;
 
 [QueryProperty("Pet", "Pet")]
@@ -7,14 +9,21 @@ public partial class PetDetailsViewModel : BaseViewModel
 
     PetService petService;//Object of PetSerivce for getting info from database
     public ObservableCollection<PetActivity> PetActivities { get; } = new();//Data Collection of data from Database
+
+
+    [ObservableProperty]
+    Pet pet;//For passed pet from Pet Info Page
+
+    [ObservableProperty]
+    String petImageFile;//For holding temp value of pet image file
+
     public PetDetailsViewModel(PetService petService)
     {
 
         this.petService = petService;
+        //petImageFile = Pet.Image;
     }
 
-    [ObservableProperty]
-    Pet pet;
 
     //Get Details from pet Information Page
     [RelayCommand]
@@ -64,10 +73,13 @@ public partial class PetDetailsViewModel : BaseViewModel
    {
        //call pet service function chnagePetName() to change name of pet in pet information database table entry with passed petID
    }
-
-   async Task changePetImageAsync(image, string petID)
+    */
+   [RelayCommand]
+   async Task changePetImageAsync(PickOptions options)
    {
-       //User will pick an image using XMAL file picker and pass it to this function
+        //User will pick an image using XMAL file picker and pass it to this function
+        FileResult image = await PickImage(options);
+
        
        //change image name to Profile_<petID>.<extension>
 
@@ -78,7 +90,34 @@ public partial class PetDetailsViewModel : BaseViewModel
 
        //call pet services, deletePetImage() with returned URL from addPetImage() call, to delete old pet profile image if it exists
     }
-   */
+
+    //User Picks Image From System
+    [RelayCommand]
+    async Task<FileResult> PickImage(PickOptions options)
+    {
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(options);
+            if (result != null)
+            {
+                if (result.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
+                    result.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+                {
+                    string imageFile = result.FileName;
+                    PetImageFile = imageFile;
+                }
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+
+            return null; // The user canceled or something went wrong
+        }
+    }
+
+    /*
     //User Picks Image From System
     [RelayCommand]
     async Task<FileResult> PickImage(PickOptions options)
@@ -104,4 +143,5 @@ public partial class PetDetailsViewModel : BaseViewModel
             return null; // The user canceled or something went wrong
         }
     }
+    */
 }

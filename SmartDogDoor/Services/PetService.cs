@@ -4,6 +4,9 @@ using System;
 using Microsoft.Data.SqlClient;
 using System.Text;
 using Azure.Storage.Blobs;
+using Azure.Identity;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 
 //Class for accessing outside data from pet server
 public class PetService
@@ -16,6 +19,7 @@ public class PetService
     List<Pet> petList = new ();
     List<PetActivity> petActivityList = new();
     List<Lock> lockList = new();
+    BlobContainerClient bloby;
 
     //Function to get data from Pet Information Database Table
     public async Task<List<Pet>> GetPets()
