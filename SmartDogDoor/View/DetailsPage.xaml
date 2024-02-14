@@ -97,8 +97,8 @@
                 <Button Grid.Column="1" Grid.Row="1" Text="File" Command="{Binding PickImageCommand}" TextColor="White" BackgroundColor="{StaticResource Primary}" VerticalOptions="Center"/>
                 <Label x:Name="FileName" Grid.Column="2" Grid.Row="1" Text="{Binding PetImageFile}" TextColor="Black" VerticalTextAlignment="Center"/>
 
-                <Button Grid.Column="0" Grid.Row="2" Text="Save" TextColor="{StaticResource Primary}" Clicked="saveInfo" BackgroundColor="{StaticResource Accent}" BorderWidth="1" BorderColor="{StaticResource Primary}" VerticalOptions="End"/>
-                <Button Grid.Column="2" Grid.Row="2" Text="Cancel" TextColor="{StaticResource Primary}" Clicked="cancelInfo" BackgroundColor="{StaticResource Accent}" BorderWidth="1" BorderColor="{StaticResource Primary}"  VerticalOptions="End"/>
+                <Button Grid.Column="0" Grid.Row="2" Text="Save" WidthRequest="110" TextColor="{StaticResource Primary}" Clicked="saveInfo" BackgroundColor="{StaticResource Accent}" BorderWidth="1" BorderColor="{StaticResource Primary}" VerticalOptions="Start" HorizontalOptions="Start"/>
+                <Button Grid.Column="2" Grid.Row="2" Text="Cancel"  WidthRequest="110" TextColor="{StaticResource Primary}" Clicked="cancelInfo" BackgroundColor="{StaticResource Accent}" BorderWidth="1" BorderColor="{StaticResource Primary}"  VerticalOptions="End" HorizontalOptions="End"/>
             </Grid>
           
             <CollectionView x:Name="Activity" IsVisible="True" BackgroundColor="Transparent"

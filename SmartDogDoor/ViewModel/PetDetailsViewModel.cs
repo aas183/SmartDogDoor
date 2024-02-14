@@ -1,6 +1,5 @@
 ﻿using SmartDogDoor.Services;
 using SmartDogDoor.View;
-
 namespace SmartDogDoor.ViewModel;
 
 [QueryProperty("Pet", "Pet")]
@@ -21,7 +20,7 @@ public partial class PetDetailsViewModel : BaseViewModel
     {
 
         this.petService = petService;
-        //petImageFile = Pet.Image;
+        //PetImageFile = Pet.Image;
     }
 
 
@@ -73,24 +72,33 @@ public partial class PetDetailsViewModel : BaseViewModel
    {
        //call pet service function chnagePetName() to change name of pet in pet information database table entry with passed petID
    }
+
     */
+    /*
    [RelayCommand]
    async Task changePetImageAsync(PickOptions options)
    {
         //User will pick an image using XMAL file picker and pass it to this function
-        FileResult image = await PickImage(options);
+        if(PetImageFile == "")
+        {
+            return;
+        }
 
-       
-       //change image name to Profile_<petID>.<extension>
 
-       //call pet services, addPetImage() to upload image to Azure Blob Storage and return image URL
+        //change image name to Profile_<petID>.<extension>
+       // var activities = await petService.GetPetActivities();//Get pets
 
-       //call pet services, addPetImageDatabase(), with image URL and petID to put image URL in pet information database table entry with passed petID
-       //returns URL
 
-       //call pet services, deletePetImage() with returned URL from addPetImage() call, to delete old pet profile image if it exists
+        //call pet services, addPetImage() to upload image to Azure Blob Storage and return image URL
+        //var activities = await petService.GetPetActivities();//Get pets
+
+
+        //call pet services, addPetImageDatabase(), with image URL and petID to put image URL in pet information database table entry with passed petID
+        //returns URL
+
+        //call pet services, deletePetImage() with returned URL from addPetImage() call, to delete old pet profile image if it exists
     }
-
+    */
     //User Picks Image From System
     [RelayCommand]
     async Task<FileResult> PickImage(PickOptions options)

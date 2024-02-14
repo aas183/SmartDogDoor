@@ -42,11 +42,17 @@ public partial class PetViewModel : BaseViewModel
             IsBusy = true;
             var pets = await petService.GetPets();//Get pets
 
-            if(Pets.Count != 0)//clear pet list if full
+            if (Pets.Count != 0)//clear pet list if full
                 Pets.Clear();
 
             foreach (var pet in pets)//update pet list from service call
+            { 
+                if (pet.InOut == "In")
+                    pet.InOutColor = Color.FromRgba("#008450");
+                else
+                    pet.InOutColor = Color.FromRgba("#B81D13");
                 Pets.Add(pet);
+            }   
         }
         catch (Exception ex)//if error
         {

@@ -8,22 +8,39 @@ using Azure.Identity;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 
+
 //Class for accessing outside data from pet server
 public class PetService
-{ 
+{
+    HttpClient httpClient;
     public PetService()
     {
+        httpClient = new HttpClient();
     }
 
     //Lists for entries from database tables
     List<Pet> petList = new ();
     List<PetActivity> petActivityList = new();
     List<Lock> lockList = new();
-    BlobContainerClient bloby;
+    //BlobContainerClient bloby;
 
     //Function to get data from Pet Information Database Table
     public async Task<List<Pet>> GetPets()
     {
+        petList.Clear();//clear current pet list
+
+        var url = "https://petconnect.azurewebsites.net/api/petInfo";
+
+        var response = await httpClient.GetAsync(url);
+        //use asynce for webapi calls
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+            petList = await response.Content.ReadFromJsonAsync<List<Pet>>();
+        }
+
+        return petList;
+        /*
         //Note: Need to make more async
         try
         {
@@ -56,7 +73,7 @@ public class PetService
                             //Console.WriteLine(reader.GetString(0));
                             
                             //Store variables from database in pet object members
-                            pet.Id = Convert.ToString(reader.GetInt64(0));
+                            pet.Id = reader.GetString(0);
                             pet.Name = reader.GetString(1);
                             pet.Image = reader.GetString(2);
                             bool inOut = reader.GetBoolean(3);
@@ -87,7 +104,7 @@ public class PetService
         
         //Console.ReadLine();
         return petList;
-        
+        */
     }
 
     /*
