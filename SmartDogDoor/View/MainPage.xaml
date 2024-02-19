@@ -9,10 +9,6 @@
              Shell.BackgroundColor="{StaticResource Primary}"
              x:Class="SmartDogDoor.View.MainPage">
 
-    <ContentPage.Resources>
-        
-    </ContentPage.Resources>
-
 
     <ContentPage.Behaviors>
         <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
@@ -23,13 +19,14 @@
       RowDefinitions="*, Auto"
       RowSpacing="0">
 
-           
+
         <CollectionView BackgroundColor="Transparent"
                     Grid.ColumnSpan="2"
                     ItemsSource="{Binding Pets}"
                     SelectionMode="None">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:Pet"><!-- Bind Pet Model to View-->
+                <DataTemplate x:DataType="model:Pet">
+                    <!-- Bind Pet Model to View-->
                     <Grid Padding="10">
                         <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
                             <Frame.GestureRecognizers>
@@ -64,13 +61,6 @@
             </CollectionView.ItemTemplate>
 
         </CollectionView>
-
-        <Button Text="Get Pets"
-            Style="{StaticResource ButtonOutline}"
-            Command="{Binding GetPetsCommand}"
-            IsEnabled="{Binding IsNotBusy}"
-            Grid.Row="1"
-            Margin="8"/>
 
         <!--Busy Indicator for Page-->
         <ActivityIndicator IsVisible="{Binding IsBusy}"

@@ -32,7 +32,7 @@ public class PetService
         var url = "https://petconnect.azurewebsites.net/api/petInfo";
 
         var response = await httpClient.GetAsync(url);
-        //use asynce for webapi calls
+        //use async for webapi calls
         if (response.IsSuccessStatusCode)
         {
             Console.Write(response.Content);
@@ -40,71 +40,6 @@ public class PetService
         }
 
         return petList;
-        /*
-        //Note: Need to make more async
-        try
-        {
-            petList.Clear();//clear current pet list
-
-            //Create connection string to database
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            builder.DataSource = "pet-server.database.windows.net";
-            builder.UserID = "drewshetler";
-            builder.Password = "DT01-Dog-D00r";
-            builder.InitialCatalog = "Pet-Database";
-
-            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))//use connection object
-            {
-                Console.WriteLine("\nQuery data:");
-                Console.WriteLine("=========================================\n");
-
-                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Information_Table";//selection from database
-
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    await connection.OpenAsync();//connect to database
-
-                    using (SqlDataReader reader = command.ExecuteReader())//use reader object 
-                    {
-                        while (reader.Read())//read until NULL entry in database
-                        {
-                            //Create new Pet Object
-                            Pet pet = new Pet();
-                            //Console.WriteLine(reader.GetString(0));
-                            
-                            //Store variables from database in pet object members
-                            pet.Id = reader.GetString(0);
-                            pet.Name = reader.GetString(1);
-                            pet.Image = reader.GetString(2);
-                            bool inOut = reader.GetBoolean(3);
-                      
-                            //set inOut memeber variables
-                            if(inOut)
-                            {
-                                pet.InOut = "In";
-                                pet.InOutColor = Color.FromRgba("#008450");
-                            }
-                            else
-                            {
-                                pet.InOut = "Out";
-                                pet.InOutColor = Color.FromRgba("#B81D13");
-                            }
-                            petList.Add(pet);//add pet to list of pets
-                            
-                            Console.WriteLine("{0} {1} {2} {3}", pet.Id, pet.Name, pet.Image, pet.InOut);
-                        }
-                    }
-                }
-            }
-        }
-        catch (SqlException e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-        
-        //Console.ReadLine();
-        return petList;
-        */
     }
 
     /*
@@ -208,122 +143,72 @@ public class PetService
     //Function for getting entries from Pet Activity database table.
     public async Task<List<PetActivity>> GetPetActivities()
     {
-        try
+        petActivityList.Clear();//clear current pet list
+
+        //Eventually add check for new activity 
+
+        var url = "https://petconnect.azurewebsites.net/api/petActivity";
+
+        var response = await httpClient.GetAsync(url);
+        //use async for webapi calls
+        if (response.IsSuccessStatusCode)
         {
-            //Pet pet;
+            Console.Write(response.Content);
+            petActivityList = await response.Content.ReadFromJsonAsync<List<PetActivity>>();
 
-
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            builder.DataSource = "pet-server.database.windows.net";
-            builder.UserID = "drewshetler";
-            builder.Password = "DT01-Dog-D00r";
-            builder.InitialCatalog = "Pet-Database";
-
-            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            //Get InOut Colors
+            foreach (var activity in petActivityList)
             {
-                Console.WriteLine("\nQuery data example:");
-                Console.WriteLine("=========================================\n");
+                //Get InOut Colors
+                if (activity.InOut == "In")
+                    activity.InOutColor = Color.FromRgba("#008450");
+                else
+                    activity.InOutColor = Color.FromRgba("#B81D13");
+            }
 
-                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
-
-                using (SqlCommand command = new SqlCommand(sql, connection))
+            //Get Pet Names
+            foreach (var activity in petActivityList)
+            {
+                //Get Pet Names
+                foreach(var pet in petList)
                 {
-                    await connection.OpenAsync();
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    if(activity.Id == pet.Id)
                     {
-                        while (reader.Read())
-                        {
-                            PetActivity pet = new PetActivity();
-                            //Console.WriteLine(reader.GetString(0));
-                            pet.Id = Convert.ToString(reader.GetInt64(0));
-                            //pet.Name = reader.GetString(1);
-                            pet.Image = reader.GetString(2);
-                            bool inOut = reader.GetBoolean(3);
-                            if (inOut)
-                            {
-                                pet.InOut = "In";
-                            }
-                            else
-                            {
-                                pet.InOut = "Out";
-                            }
-                            petActivityList.Add(pet);
-
-                            Console.WriteLine("{0} {1} {2}", pet.Id, pet.Image, pet.InOut);
-                        }
+                        activity.Name = pet.Name;
                     }
                 }
             }
-        }
-        catch (SqlException e)
-        {
-            Console.WriteLine(e.ToString());
+
+            //Convert Epoch Time to DateTime
+            foreach (var activity in petActivityList)
+            {
+                DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(activity.TimeStamp));
+                dateTimeOffset = dateTimeOffset.ToLocalTime();
+                activity.TimeStamp = dateTimeOffset.DateTime.ToString();
+            }
         }
 
-        //Console.ReadLine();
         return petActivityList;
-
     }
 
     //Not Completed
     //Function for getting entries from locking restriction database table.
     public async Task<List<Lock>> GetLocks()
     {
-        try
+        lockList.Clear();//clear current pet list
+
+        //Eventually add check for new activity 
+
+        var url = "https://petconnect.azurewebsites.net/api/petActivity";
+
+        var response = await httpClient.GetAsync(url);
+        //use async for webapi calls
+        if (response.IsSuccessStatusCode)
         {
-            //Pet pet;
-
-
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            builder.DataSource = "pet-server.database.windows.net";
-            builder.UserID = "drewshetler";
-            builder.Password = "DT01-Dog-D00r";
-            builder.InitialCatalog = "Pet-Database";
-
-            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-            {
-                Console.WriteLine("\nQuery data:");
-                Console.WriteLine("=========================================\n");
-
-                String sql = "SELECT Id, Name, Image, InOut FROM Pet_Info_Table";
-
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    await connection.OpenAsync();
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Lock pet = new Lock();
-                            //Console.WriteLine(reader.GetString(0));
-                            /*
-                            pet.Id = Convert.ToString(reader.GetInt64(0));
-                            //pet.Name = reader.GetString(1);
-                            pet.Image = reader.GetString(2);
-                            bool inOut = reader.GetBoolean(3);
-                            if (inOut)
-                            {
-                                pet.InOut = "In";
-                            }
-                            else
-                            {
-                                pet.InOut = "Out";
-                            }
-                            petActivityList.Add(pet);
-
-                            Console.WriteLine("{0} {1} {2}", pet.Id, pet.Image, pet.InOut);
-                            */
-                        }
-                    }
-                }
-            }
-        }
-        catch (SqlException e)
-        {
-            Console.WriteLine(e.ToString());
+            Console.Write(response.Content);
+            lockList = await response.Content.ReadFromJsonAsync<List<Lock>>();
         }
 
-        //Console.ReadLine();
         return lockList;
 
     }

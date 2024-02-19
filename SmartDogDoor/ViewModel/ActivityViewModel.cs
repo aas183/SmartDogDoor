@@ -15,7 +15,7 @@ public partial class ActivityViewModel : BaseViewModel
 
 
     [RelayCommand]
-    async Task GetPetsAsync ()
+    async Task GetActivitiesAsync ()
     {
         if(IsBusy) return;
 
@@ -28,7 +28,10 @@ public partial class ActivityViewModel : BaseViewModel
                 Activities.Clear();
 
             foreach (var activity in activities)
+            {
                 Activities.Add(activity);
+            }
+               
         }
         catch (Exception ex)
         {
