@@ -18,70 +18,97 @@
         <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
     </ContentPage.Behaviors>
 
-   <Grid ColumnDefinitions="*,*"
-   ColumnSpacing="5"
-   RowDefinitions="*, Auto"
-   RowSpacing="0">
+
+    <ScrollView>
+        <StackLayout>
+            <Grid ColumnDefinitions="*,*"
+                ColumnSpacing="5"
+                RowDefinitions="*"
+                RowSpacing="0">
 
 
-        <CollectionView BackgroundColor="Transparent"
-                 Grid.ColumnSpan="2"
-                 ItemsSource="{Binding Activities}"
-                 SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:PetActivity">
-                    <!-- Bind Pet Model to View-->
-                    <Grid Padding="10">
-                        <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer CommandParameter="{Binding .}" 
-                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ActivityViewModel}}, Path=GoToDetailsCommand}"/>
-                            </Frame.GestureRecognizers>
-                            <Grid Padding="0" ColumnDefinitions="125,*">
-                                <Image Aspect="AspectFill"
-                                Source="{Binding Image}"
-                                WidthRequest="125"
-                                HeightRequest="125"/>
-                                <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
-                                    <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
-                                    <Label Text="{Binding TimeStamp}" Style="{StaticResource MediumLabel}"/>
-                                    <HorizontalStackLayout>
-                                        <Frame Margin="1"
-                                        BorderColor="{Binding InOutColor}" 
-                                        BackgroundColor="{Binding InOutColor}"
-                                        CornerRadius="50"
-                                        HeightRequest="4"
-                                        WidthRequest="4"
-                                        IsClippedToBounds="True"
-                                        HorizontalOptions="Start"
-                                        VerticalOptions="Start">
-                                        </Frame>
-                                        <Label Text="{Binding InOut}" Style="{StaticResource MediumLabel}"/>
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
+                <Picker x:Name="typePicker"
+                    Title="Filter By:" Grid.Column="0" HeightRequest="35" SelectedIndexChanged="OnTypePickerSelectedIndexChanged"
+                    SelectedIndex="{Binding SelectedFilterIndex}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Most Recent</x:String>
+                            <x:String>Pet Name</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <Picker x:Name="petPicker"
+                    Title="Select Pet" Grid.Column="1" HeightRequest="35" IsVisible="False"
+                    ItemsSource="{Binding Pets}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedPet}">
+                </Picker>
+
+            </Grid>
+          
+            <Grid ColumnDefinitions="*,*"
+           ColumnSpacing="5"
+           RowDefinitions="*, Auto"
+           RowSpacing="0">
+
+
+                <CollectionView BackgroundColor="Transparent"
+                         Grid.ColumnSpan="2"
+                         ItemsSource="{Binding FilteredActivities}"
+                         SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:PetActivity">
+                            <!-- Bind Pet Model to View-->
+                            <Grid Padding="10">
+                                <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
+                                    <Frame.GestureRecognizers>
+                                    </Frame.GestureRecognizers>
+                                    <Grid Padding="0" ColumnDefinitions="125,*">
+                                        <Image Aspect="AspectFill"
+                                        Source="{Binding Image}"
+                                        WidthRequest="125"
+                                        HeightRequest="125"/>
+                                        <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
+                                            <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
+                                            <Label Text="{Binding TimeStamp}" Style="{StaticResource MediumLabel}"/>
+                                            <HorizontalStackLayout>
+                                                <Frame Margin="1"
+                                                BorderColor="{Binding InOutColor}" 
+                                                BackgroundColor="{Binding InOutColor}"
+                                                CornerRadius="50"
+                                                HeightRequest="4"
+                                                WidthRequest="4"
+                                                IsClippedToBounds="True"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Start">
+                                                </Frame>
+                                                <Label Text="{Binding InOut}" Style="{StaticResource MediumLabel}"/>
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Frame>
                             </Grid>
-                        </Frame>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
 
-        </CollectionView>
+                </CollectionView>
 
-        <Button Text="Get Activity"
-         Style="{StaticResource ButtonOutline}"
-         Command="{Binding GetActivitiesCommand}"
-         IsEnabled="{Binding IsNotBusy}"
-         Grid.Row="1"
-         Margin="8"/>
+                <Button Text="Get Activity"
+                 Style="{StaticResource ButtonOutline}"
+                 Command="{Binding GetActivitiesCommand}"
+                 IsEnabled="{Binding IsNotBusy}"
+                 Grid.Row="1"
+                 Margin="8"/>
 
-        <!--Busy Indicator for Page-->
-        <ActivityIndicator IsVisible="{Binding IsBusy}"
-        IsRunning="{Binding IsBusy}"
-        Color="{StaticResource Primary}"
-        HorizontalOptions="FillAndExpand"
-        VerticalOptions="CenterAndExpand"
-        Grid.RowSpan="2"
-        Grid.ColumnSpan="2"/>
-    </Grid>
+                <!--Busy Indicator for Page-->
+                <ActivityIndicator IsVisible="{Binding IsBusy}"
+                IsRunning="{Binding IsBusy}"
+                Color="{StaticResource Primary}"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="CenterAndExpand"
+                Grid.RowSpan="2"
+                Grid.ColumnSpan="2"/>
+            </Grid>
+        </StackLayout>
+    </ScrollView>
 
 </ContentPage>
