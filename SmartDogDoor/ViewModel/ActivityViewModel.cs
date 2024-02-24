@@ -62,8 +62,8 @@ public partial class ActivityViewModel : BaseViewModel
 
             foreach (var activity in activities)
             {
-                Activities.Add(activity);
-                FilteredActivities.Add(activity);
+                Activities.Insert(0,activity);
+                FilteredActivities.Insert(0,activity);
             }
                
         }
@@ -126,7 +126,7 @@ public partial class ActivityViewModel : BaseViewModel
         }
         else
         {
-            if(_selectedPet != null)
+            if (_selectedPet != null)
             {
                 var selectedPetId = _selectedPet.Id;
                 FilteredActivities.Clear();
@@ -138,6 +138,10 @@ public partial class ActivityViewModel : BaseViewModel
                     }
 
                 }
+            }
+            else
+            {
+                FilteredActivities.Clear();
             }
         }
         //call pet service, getPetActivities(), to update Activities observable collection

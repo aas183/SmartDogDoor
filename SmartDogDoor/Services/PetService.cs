@@ -9,6 +9,7 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 
 
+
 //Class for accessing outside data from pet server
 public class PetService
 {
@@ -42,6 +43,21 @@ public class PetService
         return petList;
     }
 
+    //Function to get data from Pet Information Database Table
+    public async Task ChangePetName(string id, string name)
+    {
+        var url = $"https://petconnect.azurewebsites.net/api/pet/{id}/name/{name}";
+        Console.Write($"Request Url: {url}");
+        var response = await httpClient.PutAsync(url,null);
+        //use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+        }
+
+        return;
+    }
     /*
     public async void addPet()
     {
@@ -106,8 +122,22 @@ public class PetService
     }
 
     /*
-    public async string addPetImageDatabase(string URL, string Id)
+    public async Task addPetImageDatabase(ImageSource image)
     {
+        var url = "https://petconnect.azurewebsites.net/api/Files";
+        Console.Write($"Request Url: {url}");
+        var formContent = new MultipartFormDataContent();
+        
+        formContent.Add(new StreamContent(new MemoryStream(image)), "fileUpload", "fileUpload");
+        var response = await httpClient.PostAsync(url, );
+        //use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+        }
+
+        return;
         //connect to database
 
         //find entry in pet information database table with passed id
@@ -160,10 +190,17 @@ public class PetService
             foreach (var activity in petActivityList)
             {
                 //Get InOut Colors
-                if (activity.InOut == "In")
+                if (activity.InOut == "True")
+                { 
+                    activity.InOut = "In";
                     activity.InOutColor = Color.FromRgba("#008450");
+                }
                 else
+                {
+                    activity.InOut = "Out";
                     activity.InOutColor = Color.FromRgba("#B81D13");
+                }
+                    
             }
 
             //Get Pet Names

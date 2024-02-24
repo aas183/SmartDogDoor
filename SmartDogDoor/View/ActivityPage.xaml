@@ -29,7 +29,7 @@
 
                 <Picker x:Name="typePicker"
                     Title="Filter By:" Grid.Column="0" HeightRequest="35" SelectedIndexChanged="OnTypePickerSelectedIndexChanged"
-                    SelectedIndex="{Binding SelectedFilterIndex}">
+                    SelectedIndex="{Binding SelectedFilterIndex}" TextColor="Black" TitleColor="Black">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
                             <x:String>Most Recent</x:String>
@@ -40,7 +40,8 @@
 
                 <Picker x:Name="petPicker"
                     Title="Select Pet" Grid.Column="1" HeightRequest="35" IsVisible="False"
-                    ItemsSource="{Binding Pets}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedPet}">
+                    ItemsSource="{Binding Pets}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedPet}" 
+                    TextColor="Black" TitleColor="Black">
                 </Picker>
 
             </Grid>
