@@ -15,21 +15,21 @@
         <!-- Top of Page have dropdown box to let the user filter activity by pet or time-->
         <!--Display Activity Information in Card View Similar to MainPage-->
     <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
         <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
     </ContentPage.Behaviors>
-
 
     <ScrollView>
         <StackLayout>
             <Grid ColumnDefinitions="*,*"
                 ColumnSpacing="5"
                 RowDefinitions="*"
-                RowSpacing="0">
+                RowSpacing="0" BackgroundColor="{StaticResource Primary}">
 
 
                 <Picker x:Name="typePicker"
                     Title="Filter By:" Grid.Column="0" HeightRequest="35" SelectedIndexChanged="OnTypePickerSelectedIndexChanged"
-                    SelectedIndex="{Binding SelectedFilterIndex}" TextColor="Black" TitleColor="Black">
+                    SelectedIndex="{Binding SelectedFilterIndex}" TextColor="White" TitleColor="White">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
                             <x:String>Most Recent</x:String>
@@ -39,9 +39,9 @@
                 </Picker>
 
                 <Picker x:Name="petPicker"
-                    Title="Select Pet" Grid.Column="1" HeightRequest="35" IsVisible="False"
+                    Title="Select Pet:" Grid.Column="1" HeightRequest="35" IsVisible="False"
                     ItemsSource="{Binding Pets}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedPet}" 
-                    TextColor="Black" TitleColor="Black">
+                    TextColor="White" TitleColor="White">
                 </Picker>
 
             </Grid>
@@ -59,15 +59,15 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:PetActivity">
                             <!-- Bind Pet Model to View-->
-                            <Grid Padding="10">
-                                <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
+                            <Grid Padding="5">
+                                <Frame HeightRequest="90" Padding="0" Style="{StaticResource CardView}">
                                     <Frame.GestureRecognizers>
                                     </Frame.GestureRecognizers>
-                                    <Grid Padding="0" ColumnDefinitions="125,*">
+                                    <Grid Padding="0" ColumnDefinitions="90,*">
                                         <Image Aspect="AspectFill"
                                         Source="{Binding Image}"
-                                        WidthRequest="125"
-                                        HeightRequest="125"/>
+                                        WidthRequest="90"
+                                        HeightRequest="90"/>
                                         <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
                                             <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
                                             <Label Text="{Binding TimeStamp}" Style="{StaticResource MediumLabel}"/>

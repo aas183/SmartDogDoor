@@ -11,7 +11,7 @@ public partial class PetViewModel : BaseViewModel
     {
         Title = "Pets";
         this.petService = petService;
-        GetPetsAsync();
+        //GetPetsAsync();
     }
 
 
@@ -66,6 +66,32 @@ public partial class PetViewModel : BaseViewModel
         }
     }
 
+    //Get Details from pet Information Page from local save in pet service
+    [RelayCommand]
+    async Task GetPetsLocal()
+    {
+        try
+        {
+            var pets = petService.GetPetsLocal();//Get pets
+
+            if (Pets.Count != 0)//clear pet list if full
+                Pets.Clear();
+
+            foreach (var pet in pets)//update pet list from service call
+            {
+                if (pet.InOut == "In")
+                    pet.InOutColor = Color.FromRgba("#008450");
+                else
+                    pet.InOutColor = Color.FromRgba("#B81D13");
+                Pets.Add(pet);
+            }
+        }
+        catch (Exception ex)//if error
+        {
+            Debug.WriteLine(ex);
+        }
+    }
+
     /*
     async Task addPetsAsync()
     {
@@ -87,5 +113,21 @@ public partial class PetViewModel : BaseViewModel
             //tell user pet addition was unsuccessful then call pet service, deletePet(), to delete pet entry
     }
     */
+
+    [RelayCommand]
+    async Task Appearing()
+    {
+        try
+        {
+
+            //await GetPetsLocal();
+            await GetPetsAsync();
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
+        }
+    }
 
 }

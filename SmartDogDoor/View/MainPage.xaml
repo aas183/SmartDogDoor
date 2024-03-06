@@ -9,8 +9,8 @@
              Shell.BackgroundColor="{StaticResource Primary}"
              x:Class="SmartDogDoor.View.MainPage">
 
-
     <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
         <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
     </ContentPage.Behaviors>
 

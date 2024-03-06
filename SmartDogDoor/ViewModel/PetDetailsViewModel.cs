@@ -7,7 +7,7 @@ public partial class PetDetailsViewModel : BaseViewModel
 {
 
     PetService petService;//Object of PetSerivce for getting info from database
-    private ObservableCollection<PetActivity> _activities = new();//Data Collection of data from Databasej
+    private ObservableCollection<PetActivity> _activities = new();//Data Collection of data from Database
     //[NotifyPropertyChangedFor(nameof(Activities))]
     public ObservableCollection<PetActivity> Activities
     {
@@ -81,13 +81,13 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
 
-    private ImageSource selectedPetImage;
+    private String selectedPetImage;
 
     public PetDetailsViewModel(PetService petService)
     {
 
         this.petService = petService;
-        GetActivitiesAsync();
+       // GetActivitiesAsync();
     }
 
 
@@ -96,7 +96,7 @@ public partial class PetDetailsViewModel : BaseViewModel
     async Task GetActivitiesAsync()
     {
         if (IsBusy) return;
-
+        Console.Write("Run GetPetActivity");
         try
         {
             IsBusy = true;
@@ -125,6 +125,7 @@ public partial class PetDetailsViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
     /*
     async Task deletePetsAsync(string Id)
     {
@@ -147,14 +148,16 @@ public partial class PetDetailsViewModel : BaseViewModel
             Console.Write($"\nPet.Id: {Pet.Id}, PetName: {PetName}");
             await petService.ChangePetName(Pet.Id,PetName);
             PetNameSaved = PetName;
-
             
             for (int i = 0; i < Activities.Count; ++i)
             {
+                //Update names in list (this forces the property chnaged event
                 Console.Write($"\nName Change");
-                Activities[i].Name= PetName;
+                var activity = Activities[i];
+                activity.Name = PetName;
+                Activities[i] = activity;
             }
-            
+            Pet.Name = PetName;
 
         }
         catch (Exception ex)
@@ -177,6 +180,7 @@ public partial class PetDetailsViewModel : BaseViewModel
         {
             if(PetImageFile != "" &&  PetImageFile != Pet.Image) // Save Image
             {
+                await petService.addPetImageDatabase(selectedPetImage, PetImageFile);
                 
             }
             if(PetName != Pet.Name) // Change Pet Name
@@ -264,8 +268,8 @@ public partial class PetDetailsViewModel : BaseViewModel
                 if (result.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
                     result.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
                 {
-                    using var stream = await result.OpenReadAsync();
-                    selectedPetImage = ImageSource.FromStream(() => stream);
+                    //using var stream = await result.OpenReadAsync();
+                    selectedPetImage = result.FullPath;
                     PetImageFile = result.FileName;
                 }
             }
@@ -278,5 +282,21 @@ public partial class PetDetailsViewModel : BaseViewModel
             return null; // The user canceled or something went wrong
         }
     }
-    
+
+    [RelayCommand]
+    async Task Appearing()
+    {
+        try
+        {
+
+            //await GetPetsLocal();
+            await GetActivitiesAsync();
+
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
+        }
+    }
+
 }

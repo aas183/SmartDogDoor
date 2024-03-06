@@ -43,6 +43,14 @@ public class PetService
         return petList;
     }
 
+    //Function to return local list of pets
+    public List<Pet> GetPetsLocal()
+    {
+        return petList;
+    }
+
+
+
     //Function to get data from Pet Information Database Table
     public async Task ChangePetName(string id, string name)
     {
@@ -54,6 +62,14 @@ public class PetService
         if (response.IsSuccessStatusCode)
         {
             Console.Write(response.Content);
+        }
+
+        foreach (var pet in petList)
+        {
+            if (pet.Id == id)
+            {
+                pet.Name = name;
+            }
         }
 
         return;
@@ -121,10 +137,11 @@ public class PetService
         fileStream.Close();
     }
 
-    /*
-    public async Task addPetImageDatabase(ImageSource image)
+    
+    public async Task addPetImageDatabase(String imagePath, String fileName)
     {
-        var url = "https://petconnect.azurewebsites.net/api/Files";
+        //var url = "https://petconnect.azurewebsites.net/api/Files";
+        /*
         Console.Write($"Request Url: {url}");
         var formContent = new MultipartFormDataContent();
         
@@ -138,13 +155,107 @@ public class PetService
         }
 
         return;
+        */
+
+        // TODO: implement auth - this example works for bearer tokens:
+        // client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UploadKey);
+        // Or you could use simple headers:
+        //client.DefaultRequestHeaders.Add("token", UploadKey);
+        // inject the JSON header... and others if you need them
+
+        /*
+        var file = new FileInfo(imagePath);
+        if (!file.Exists)
+            throw new ArgumentException($"Unable to access file at: {imagePath}", nameof(imagePath));
+
+        var stream = file.OpenRead();
+        
+        var multipartContent = new MultipartFormDataContent();
+        multipartContent.Add(
+            new StreamContent(stream),
+            "imgfile", // this is the name of FormData field
+            fileName);
+
+        //System.Net.Http.HttpRequestMessage request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, uri);
+        //request.Content = multipartContent;
+        var response = await httpClient.PostAsync(url, multipartContent);
+        //return response.IsSuccessStatusCode;
+        //var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode(); // this throws an exception on non HTTP success codes
+        
+        
+        return;
+        */
+
+        
+        using (var request = new HttpRequestMessage(new HttpMethod("POST"), "https://petconnect.azurewebsites.net/api/Files"))
+        {
+            request.Headers.TryAddWithoutValidation("accept", "*/*");
+
+            var multipartContent = new MultipartFormDataContent();
+            var file = new ByteArrayContent(File.ReadAllBytes(imagePath));
+            file.Headers.Add("Content-Type", "image/jpeg");
+            multipartContent.Add(file, "file", fileName);
+            request.Content = multipartContent;
+
+            var response = await httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode(); // this throws an exception on non HTTP success codes
+        }
+        
+
+        /*
+        using (var client = new System.Net.Http.HttpClient())
+        {
+            // TODO: implement auth - this example works for bearer tokens:
+            // client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", UploadKey);
+            // Or you could use simple headers:
+            // inject the JSON header... and others if you need them
+            client.DefaultRequestHeaders.Add("json", "true");
+
+            var uri = new System.Uri("https://petconnect.azurewebsites.net/api/Files");
+
+            // Load the file:
+            var file = new System.IO.FileInfo(imagePath);
+            if (!file.Exists)
+                throw new ArgumentException($"Unable to access file at: {imagePath}", nameof(imagePath));
+
+            using (var stream = file.OpenRead())
+            {
+                var multipartContent = new System.Net.Http.MultipartFormDataContent();
+                multipartContent.Add(
+                    new StreamContent(stream),
+                    "image", // this is the name of FormData field
+                    file.Name);
+
+                System.Net.Http.HttpRequestMessage request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Post, uri);
+                request.Content = multipartContent;
+                var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode(); // this throws an exception on non HTTP success codes
+            }
+        }
+        */
         //connect to database
 
         //find entry in pet information database table with passed id
 
         //change found entry with passed id's image link to passed URL
+        /*
+        public async Task UploadImageAsync(Stream image, string fileName)
+        {
+            HttpContent fileStreamContent = new StreamContent(image);
+            fileStreamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data") { Name = "file", FileName = fileName };
+            fileStreamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+            using (var client = new HttpClient())
+            using (var formData = new MultipartFormDataContent())
+            {
+                formData.Add(fileStreamContent);
+                var response = await client.PostAsync(url, formData);
+                return response.IsSuccessStatusCode;
+            }
+        }
+        */
     }
-    */
+    
 
     /*
     public async void deletePetImages(string ID)
@@ -158,16 +269,17 @@ public class PetService
     }
     */
 
-    /*
-    public async string deletePetImage(string URL)
+    
+    public async Task deletePetImage(string image)
     {
+        //image = 
         //connect to Blob storage
 
         //delete image entry with passed URL
 
         //return old image URL
     }
-    */
+    
 
     //Not Completed
     //Function for getting entries from Pet Activity database table.
@@ -269,22 +381,6 @@ public class PetService
     }
     */
 
-
-    /*
-    if(petList?.Count >  0) 
-        return petList;
-
-    var url = "";
-
-    var response = await httpClient.GetAsync(url);
-    //use asynce for webapi calls
-    if(response.IsSuccessStatusCode)
-    {
-        petList  = await response.Content.ReadFromJsonAsync<List<Pet>>();
-    }
-
-    return petList;
-    */
 }
 
 

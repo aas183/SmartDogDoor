@@ -8,7 +8,12 @@
              Shell.BackgroundColor="{StaticResource Primary}"
              Title="{Binding PetNameSaved}"
              x:Class="SmartDogDoor.View.DetailsPage">
-    
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
+        <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
+    </ContentPage.Behaviors>
+
     <ScrollView>
         <StackLayout>
             <Grid ColumnDefinitions="Auto,*,Auto,*,Auto" RowDefinitions="135,Auto">
@@ -18,7 +23,7 @@
                      HeightRequest="200"
                      HorizontalOptions="FillAndExpand"/>
 
-                    <Frame Grid.RowSpan="2"
+                <Frame Grid.RowSpan="2"
                        Grid.Column="2"
                        HeightRequest="160"
                        WidthRequest="160"
@@ -28,13 +33,13 @@
                        Padding="0"
                        Margin="0,0,0,0">
 
-                        <Image Aspect="AspectFill"
+                    <Image Aspect="AspectFill"
                            HeightRequest="160"
                            WidthRequest="160"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
                            Source="{Binding Pet.Image}"/>
-                    </Frame>
+                </Frame>
                 <Frame Margin="-35,0,0,0"
                    Grid.Column="3"
                    Grid.Row="1"
@@ -85,9 +90,9 @@
                     ImageSource="delete.svg"
                 />
             </Grid>
-            
-            
-            
+
+
+
 
             <Grid x:Name="Edit" IsVisible="False" BackgroundColor="SlateGrey" ColumnDefinitions="Auto,Auto,*" RowDefinitions="*, *, Auto" RowSpacing="40" ColumnSpacing="10" Padding="5">
                 <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource MediumLabel}" Text="Pet Name:" TextColor="Black" Padding="0" Margin="0,0,0,0" VerticalTextAlignment="Center"/>
@@ -115,12 +120,11 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:PetActivity">
                             <!-- Bind Pet Model to View-->
-                            <Grid Padding="10">
+                            <Grid Padding="5">
                                 <Frame HeightRequest="90" Padding="0" Style="{StaticResource CardView}">
                                     <Frame.GestureRecognizers>
                                     </Frame.GestureRecognizers>
-                                    <Grid Padding="0" ColumnDefinitions="90
-                                          ,*">
+                                    <Grid Padding="0" ColumnDefinitions="90,*">
                                         <Image Aspect="AspectFill"
                                                Source="{Binding Image}"
                                                WidthRequest="90"
@@ -150,11 +154,9 @@
 
                 </CollectionView>
             </Grid>
-        </StackLayout>
+        </StackLayout> 
     </ScrollView>
-   
 
-   
     <!-- Display Pet Information and Pet Activity Data for Selected pet form Main Page-->
     
         <!-- Title of page will be the pet's name-->

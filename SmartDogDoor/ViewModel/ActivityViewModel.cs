@@ -40,7 +40,7 @@ public partial class ActivityViewModel : BaseViewModel
     {
         Title = "Activity";
         this.petService = petService;
-        GetPetsAsync();
+        //GetPetsAsync();
     }
 
 
@@ -59,11 +59,28 @@ public partial class ActivityViewModel : BaseViewModel
                 Activities.Clear();
                 FilteredActivities.Clear();
             }
+            /*
+            var selectedPetId;
+            if (SelectedFilterIndex == 1)
+            {
+                selectedPetId = _selectedPet.Id;
+            }
+            */
 
             foreach (var activity in activities)
             {
                 Activities.Insert(0,activity);
-                FilteredActivities.Insert(0,activity);
+                if (SelectedFilterIndex == 0)
+                {
+                    FilteredActivities.Insert(0, activity);
+                }
+                else
+                {
+                    if (_selectedPet != null && activity.Id == _selectedPet.Id)
+                    {
+                        FilteredActivities.Insert(0, activity);
+                    }
+                }
             }
                
         }
@@ -112,6 +129,45 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
+    //Get Details from pet Information Page from local save in pet service
+    [RelayCommand]
+    void GetPetsLocal()
+    {
+        try
+        {
+            var pets = petService.GetPetsLocal();//Get pets
+
+            if(Pets.Count != pets.Count)
+            { 
+                if (Pets.Count != 0)//clear pet list if full
+                    Pets.Clear();
+
+                foreach (var pet in pets)//update pet list from service call
+                {
+                    if (pet.InOut == "In")
+                        pet.InOutColor = Color.FromRgba("#008450");
+                    else
+                        pet.InOutColor = Color.FromRgba("#B81D13");
+                    Pets.Add(pet);
+                }
+            }
+            else
+            {
+                for(int i = 0; i < pets.Count; ++i)//update pet list from service call
+                {
+                    if (pets[i].Name != Pets[i].Name)
+                    {
+                        Pets[i].Name = pets[i].Name;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)//if error
+        {
+            Debug.WriteLine(ex);
+        }
+    }
+
     //Get Details from pet Information Page
     //[RelayCommand]
     public void filterActivity()
@@ -152,5 +208,23 @@ public partial class ActivityViewModel : BaseViewModel
         //If 0 pet name selected;
             //look through observable collection and delete entries that do not have the passed petID
             //sort entries by most recent activity first
+    }
+
+    [RelayCommand]
+    async Task Appearing()
+    {
+        try
+        {
+
+            //await GetPetsLocal();
+            GetPetsLocal();
+            await GetActivitiesAsync();
+            //await GetPetsAsync();
+            
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
+        }
     }
 }
