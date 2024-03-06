@@ -178,15 +178,16 @@ public partial class PetDetailsViewModel : BaseViewModel
         //save changes made to pet information by user
         try
         {
-            if(PetImageFile != "" &&  PetImageFile != Pet.Image) // Save Image
-            {
-                await petService.addPetImageDatabase(selectedPetImage, PetImageFile);
-                
-            }
-            if(PetName != Pet.Name) // Change Pet Name
+            if (PetName != Pet.Name) // Change Pet Name
             {
                 Console.Write($"\nPet.Name: {Pet.Name}, PetName: {PetName}");
                 await changePetNameAsync();
+            }
+            if (PetImageFile != "" &&  PetImageFile != Pet.Image) // Save Image
+            {
+                await petService.addPetImageDatabase(selectedPetImage, PetImageFile);
+                //await petServie.d
+                
             }
 
         }
