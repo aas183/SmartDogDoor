@@ -10,6 +10,7 @@ using Azure.Storage.Blobs.Specialized;
 using Xamarin.Google.Crypto.Tink.Shaded.Protobuf;
 using CommunityToolkit.Maui.Converters;
 using Android.Telephony;
+using static Java.Util.Jar.Attributes;
 
 
 
@@ -112,41 +113,12 @@ public class PetService
    }
    */
 
-    /*
-    public async string addPetImage(image img)
-    {
-        //connect to Blob storage
-
-        //add upload passed image into blob storage
-
-        //return URL
-    }
-    */
-
-    public static async Task UploadFromBinaryDataAsync(BlobContainerClient containerClient, string localFilePath)
-    {
-        string fileName = Path.GetFileName(localFilePath);
-        BlobClient blobClient = containerClient.GetBlobClient(fileName);
-
-        FileStream fileStream = File.OpenRead(localFilePath);
-        BinaryReader reader = new BinaryReader(fileStream);
-
-        byte[] buffer = new byte[fileStream.Length];
-        reader.Read(buffer, 0, buffer.Length);
-        BinaryData binaryData = new BinaryData(buffer);
-
-        await blobClient.UploadAsync(binaryData, true);
-
-        fileStream.Close();
-    }
-
-    
-    public async Task addPetImageDatabase(String imagePath, String fileName)
+    public async Task<String> addPetImageDatabase(String imagePath, String fileName, string petName)
     {
         var url = "https://petconnect.azurewebsites.net/api/Files";//api url        
 
         var multipartContent = new MultipartFormDataContent();
-
+        var saveFilename = "";
         /*
         var file = new FileInfo(imagePath);
         if (!file.Exists)
@@ -154,16 +126,55 @@ public class PetService
         */
         
         var file = new ByteArrayContent(File.ReadAllBytes(imagePath)) ?? throw new ArgumentException($"Unable to access file at: {imagePath}", nameof(imagePath));
-        file.Headers.Add("Content-Type", "image/jpeg");
-        multipartContent.Add(file, "file", fileName);
+
+        Debug.WriteLine(fileName);
+        var index = fileName.LastIndexOf('.');
+        var fileType = fileName.Substring(index, fileName.Length - index - 1);
+        Debug.WriteLine(index);
+        if (fileType == "png")
+        {
+            file.Headers.Add("Content-Type", "image/png");
+            saveFilename = $"Profile_{petName}.png";
+        }
+        else
+        {
+            file.Headers.Add("Content-Type", "image/jpeg");
+            saveFilename = $"Profile_{petName}.jpg";
+        }
+           
+        multipartContent.Add(file, "file", saveFilename);
 
         //send command
         var response = await httpClient.PostAsync(url, multipartContent);
         response.EnsureSuccessStatusCode(); // this throws an exception on non HTTP success codes
 
-        return;
+        return saveFilename;
     }
-    
+
+    public async Task<String> changePetImage(string id, string filename)
+    {
+        var url = $"https://petconnect.azurewebsites.net/api/pet/{id}/image/{filename}";
+        Console.Write($"Request Url: {url}");
+        var response = await httpClient.PutAsync(url, null);
+        //use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+        }
+
+        var newImage = $"https://petimagestorage.blob.core.windows.net/pet-images/{filename}";
+        foreach (var pet in petList)
+        {
+            if (pet.Id == id)
+            {
+                pet.Image = newImage;
+            }
+        }
+
+        return newImage;
+    }
+
 
     /*
     public async void deletePetImages(string ID)
@@ -177,18 +188,20 @@ public class PetService
     }
     */
 
-    
+
     public async Task deletePetImage(string image)
     {
-
+        //Debug.WriteLine(image);
         var index = image.LastIndexOf('/');
-        if (index != -1)
-            image = image.Substring(index+1, image.Length - index);
+        //Debug.WriteLine(index);
+        if (index == -1)
+            return;
+        //Debug.WriteLine(image.Length);
+        //Debug.WriteLine(image.Length-index);
+        image = image.Substring(index+1, image.Length-index-1);
+        //Debug.WriteLine(image);
 
-        var url = "https://petconnect.azurewebsites.net/api/Files";//api url        
-
-
-        
+        var url = $"https://petconnect.azurewebsites.net/api/Files/filename?filename={image}";//api url        
 
         //send command
         var response = await httpClient.DeleteAsync(url);

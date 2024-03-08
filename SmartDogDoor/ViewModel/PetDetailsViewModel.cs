@@ -33,8 +33,11 @@ public partial class PetDetailsViewModel : BaseViewModel
             PetImageFile = _pet.Image;
             PetName = _pet.Name;
             PetNameSaved = _pet.Name;
+            PetImageSaved = _pet.Image;
         }
     }
+
+    private String selectedPetImage;
 
     //For keeping track of user selected pet image
     private String _petImageFile;
@@ -48,6 +51,21 @@ public partial class PetDetailsViewModel : BaseViewModel
         {
             _petImageFile = value;
             OnPropertyChanged(nameof(PetImageFile));
+        }
+    }
+
+    //for holding most current saved pet name
+    private String _petImageSaved;
+    public String PetImageSaved
+    {
+        get
+        {
+            return _petImageSaved;
+        }
+        set
+        {
+            _petImageSaved = value;
+            OnPropertyChanged(nameof(PetImageSaved));
         }
     }
 
@@ -80,8 +98,6 @@ public partial class PetDetailsViewModel : BaseViewModel
             OnPropertyChanged(nameof(PetNameSaved));
         }
     }
-
-    private String selectedPetImage;
 
     public PetDetailsViewModel(PetService petService)
     {
@@ -183,10 +199,20 @@ public partial class PetDetailsViewModel : BaseViewModel
                 Console.Write($"\nPet.Name: {Pet.Name}, PetName: {PetName}");
                 await changePetNameAsync();
             }
-            if (PetImageFile != "" &&  PetImageFile != Pet.Image) // Save Image
+
+            // Change Pet Image
+            var index = Pet.Image.LastIndexOf('/');
+            if (index == -1)
+                return;
+            var previousImage = Pet.Image.Substring(index + 1, Pet.Image.Length - index - 1);
+            if (PetImageFile != "" &&  PetImageFile != previousImage) // Save Image
             {
-                await petService.addPetImageDatabase(selectedPetImage, PetImageFile);
-                //await petServie.d
+                await petService.deletePetImage(Pet.Image);//await petServie.d
+                var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
+                //await petService.deletePetImage(previousImage);//await petServie.d
+                var image = await petService.changePetImage(Pet.Id, imageFilename);
+                Pet.Image = image;
+                PetImageSaved = image;
                 
             }
 

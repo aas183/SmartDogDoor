@@ -38,7 +38,7 @@
                            WidthRequest="160"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           Source="{Binding Pet.Image}"/>
+                           Source="{Binding PetImageSaved}"/>
                 </Frame>
                 <Frame Margin="-35,0,0,0"
                    Grid.Column="3"
