@@ -19,13 +19,15 @@
       RowDefinitions="*, Auto"
       RowSpacing="0">
 
-           
-        <CollectionView BackgroundColor="Transparent"
+
+        <CollectionView x:Name="PetsView" 
+                    BackgroundColor="Transparent"
                     Grid.ColumnSpan="2"
                     ItemsSource="{Binding Pets}"
                     SelectionMode="None">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:Pet"><!-- Bind Pet Model to View-->
+                <DataTemplate x:DataType="model:Pet">
+                    <!-- Bind Pet Model to View-->
                     <Grid Padding="10">
                         <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
                             <Frame.GestureRecognizers>
@@ -58,23 +60,65 @@
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
         </CollectionView>
 
-        <Button Text="Get Pets"
-            Style="{StaticResource ButtonOutline}"
-            Command="{Binding GetPetsCommand}"
+        <Button x:Name="AddPetBtn"
+            Text="Add Pet"
+            BackgroundColor="{StaticResource Primary}"
+            TextColor="{StaticResource Accent}"
+            Command="{Binding AddPetCommand}"
             IsEnabled="{Binding IsNotBusy}"
+            Clicked="addPet"
             Grid.Row="1"
-            Margin="8"/>
+            HorizontalOptions="Center"
+            Margin="10"
+            Grid.ColumnSpan="2"
+            CornerRadius="20"/>
 
         <!--Busy Indicator for Page-->
-        <ActivityIndicator IsVisible="{Binding IsBusy}"
+        <ActivityIndicator 
+           x:Name="BusyIndicator"
+           IsVisible="{Binding IsBusy}"
            IsRunning="{Binding IsBusy}"
            Color="{StaticResource Primary}"
            HorizontalOptions="FillAndExpand"
            VerticalOptions="CenterAndExpand"
            Grid.RowSpan="2"
            Grid.ColumnSpan="2"/>
+
+        <Grid x:Name="AddPetInteraction" IsVisible ="{Binding IsAddPet}" Grid.ColumnSpan="2" Padding="15">
+            <Frame HeightRequest="250" Padding="0" Style="{StaticResource CardView}">
+                <StackLayout>
+                    <Label x:Name="InsLabel" 
+                       IsVisible="True"
+                       BackgroundColor="Transparent"
+                       TextColor="Black"
+                       HorizontalTextAlignment="Center"
+                       FontSize="25"
+                       Text="Place the Pet's Tag Against the Tag Reader on the Dog Door within
+                            1 minute."
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="CenterAndExpand"
+                       Grid.RowSpan="2"
+                       Grid.ColumnSpan="2"/>
+                    
+                    <Button
+                        Text="Cancel"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="{StaticResource Accent}"
+                        Clicked="cancelAddPet"
+                        Grid.Row="1"
+                        HorizontalOptions="Center"
+                        Margin="10"
+                        Grid.ColumnSpan="2"
+                        CornerRadius="10"/>
+                </StackLayout>
+            </Frame>
+        </Grid>
+
+       
     </Grid>
+
+ 
+    
 </ContentPage>

@@ -7,10 +7,9 @@ using Azure.Storage.Blobs;
 using Azure.Identity;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
-using Xamarin.Google.Crypto.Tink.Shaded.Protobuf;
 using CommunityToolkit.Maui.Converters;
-using Android.Telephony;
-using static Java.Util.Jar.Attributes;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 
 
@@ -26,8 +25,9 @@ public class PetService
     //Lists for entries from database tables
     List<Pet> petList = new ();
     List<PetActivity> petActivityList = new();
+    List<PetActivity> petActivityListRaw = new(); // for keeping timestamps in orginial form
     List<Lock> lockList = new();
-    //BlobContainerClient bloby;
+    
 
     //Function to get data from Pet Information Database Table
     public async Task<List<Pet>> GetPets()
@@ -78,41 +78,131 @@ public class PetService
 
         return;
     }
-    /*
-    public async void addPet()
+    
+    public async Task addPet()
     {
-        //connect to database
+        var newPet = new { id = "0", name = "", image = "", inOut = ""};
+        var jsonContent = JsonConvert.SerializeObject(newPet);
 
-        //read number of entries in pet information database table
+        //string jsonPetInfo = $"{{\"id\": \"0\", \"name\": \"{petList.Count + 1}\",  \"image\": \"\",  \"inOut\": \"In\"}}";
 
-        //add a new row to database table and make the pet name Pet<numofPets+1> and make inOut True
+        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //var httpContent = new StringContent(jsonPetInfo);
+        var url = $"https://petconnect.azurewebsites.net/api/addPet";
+        Console.Write($"Request Url: {url}");
+        var response = await httpClient.PostAsync(url, httpContent);
+        //use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Debug.WriteLine(response.Content);
+        }
 
+        Debug.WriteLine("Added Pet");
+
+        return;
     }
-    */
 
-    /*
-    public async void deletePet(string id)
+    
+    // check for pet id of zero to see if pet has been successfully added
+    public async Task<bool> checkForPetIdOfZero()
     {
-        //connect to database
+        var url = "https://petconnect.azurewebsites.net/api/petId";
+        List<Pet> Ids = new();
 
-        //read number of entries in pet information database table
+        var response = await httpClient.GetAsync(url);
+        //use async for webapi calls
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+            Ids = await response.Content.ReadFromJsonAsync<List<Pet>>();
 
-        //add find row with passed id in pet information database table and delete pet
-        //find entries in pet activity database table with passed id and delete them
+            foreach(var pet in Ids)
+            {
+                if (pet.Id == "0")
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
-    */
+    
+    // check for pet id of zero to see if pet has been successfully added
+    public async Task<bool> checkForNewId(int petCount)
+    {
+        var url = "https://petconnect.azurewebsites.net/api/petId";
+        List<Pet> Ids = new();
 
-    /*
-   public async void changePetName(string id, string name)
-   {
-       //connect to database
+        var response = await httpClient.GetAsync(url);
+        //use async for webapi calls
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+            Ids = await response.Content.ReadFromJsonAsync<List<Pet>>();
 
-       //find entry in pet information database table with passed id
+            if (Ids.Count > petCount)
+            {
+                return true;
+            }
+        }
 
-       //change found entry with passed id's name to passed name
-   }
-   */
+        return false;
+    }
 
+    // Delete Pet Entry from Pet Information Table
+    public async Task deletePet (string id)
+    {
+        var url = $"https://petconnect.azurewebsites.net/api/deletePet/{id}";
+        Console.Write($"Request Url: {url}");
+        var response = await httpClient.DeleteAsync(url);
+        //use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+        }
+    }
+    
+    //Delete all Images and Entries associated with a given pet
+    public async Task deleteAllPetInformation(string id)
+    {
+
+        await deleteAllPetImages(id);
+
+        foreach(var activity in petActivityListRaw)
+        {
+            if (activity.Id  == id)
+            {
+                await deletePetActivity(activity.TimeStamp);
+            }
+        }
+
+        await deletePet(id);
+
+        return;
+    }
+
+    // Delete an entry in the pet activity table
+    public async Task deletePetActivity(string timestamp)
+    {
+        // Fix
+
+
+
+        var url = $"https://petconnect.azurewebsites.net/api/deletePetActivity/{timestamp}";
+        Console.Write($"Request Url: {url}");
+        var response = await httpClient.DeleteAsync(url);
+        //use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+        }
+    }
+
+    // Add new pet image to database (blob storage)
     public async Task<String> addPetImageDatabase(String imagePath, String fileName, string petName)
     {
         var url = "https://petconnect.azurewebsites.net/api/Files";//api url        
@@ -151,6 +241,7 @@ public class PetService
         return saveFilename;
     }
 
+    // Chnage Pet Profile Image for passed pet in database
     public async Task<String> changePetImage(string id, string filename)
     {
         var url = $"https://petconnect.azurewebsites.net/api/pet/{id}/image/{filename}";
@@ -175,31 +266,34 @@ public class PetService
         return newImage;
     }
 
-
-    /*
-    public async void deletePetImages(string ID)
+    public async Task deleteAllPetImages(string Id)
     {
-        //connect to database and Blob storage
+        
+        foreach(var activity in petActivityList)
+        {
+            if (activity.Id == Id)
+            {
+                await deletePetImage(activity.Image);
+            }
+        }
 
-        //search pet information database table and pet activity database table for all entries for passed ID and get all 
-        //entries image URLs
-
-        //Using URL for images go into blob storage and delete all images with the received URLS
+        foreach (var pet in petList)
+        {
+            if (pet.Id == Id)
+            {
+                await deletePetImage(pet.Id);
+            }
+        }
     }
-    */
 
-
+    // delete specified image in database (blob storage)
     public async Task deletePetImage(string image)
     {
-        //Debug.WriteLine(image);
+
         var index = image.LastIndexOf('/');
-        //Debug.WriteLine(index);
         if (index == -1)
             return;
-        //Debug.WriteLine(image.Length);
-        //Debug.WriteLine(image.Length-index);
-        image = image.Substring(index+1, image.Length-index-1);
-        //Debug.WriteLine(image);
+        image = image.Substring(index+1, image.Length-index-1);;
 
         var url = $"https://petconnect.azurewebsites.net/api/Files/filename?filename={image}";//api url        
 
@@ -227,6 +321,7 @@ public class PetService
         {
             Console.Write(response.Content);
             petActivityList = await response.Content.ReadFromJsonAsync<List<PetActivity>>();
+            petActivityListRaw = petActivityList;
 
             //Get InOut Colors
             foreach (var activity in petActivityList)

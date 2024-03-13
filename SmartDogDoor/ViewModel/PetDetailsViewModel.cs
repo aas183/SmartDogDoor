@@ -142,18 +142,20 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
 
-    /*
-    async Task deletePetsAsync(string Id)
+    
+    async Task deletePetAsync(string Id)
     {
         //Prompt user "Are you sure if you want to delete pet from system?" (Yes/No)
 
         //If no 
-            //quit
+        //quit
         //If yes
-            //call pet service, deletePetImages(), to delete all images associated Id
-            //all pet services, deletePet(), to delete all entries for selected pet's id in pet information and pet activity table
+        //call pet service, deletePetImages(), to delete all images associated Id
+        //all pet services, deletePet(), to delete all entries for selected pet's id in pet information and pet activity table
+
+        await petService.deleteAllPetInformation(Id);
     }
-    */
+    
 
     
    async Task changePetNameAsync()
@@ -202,19 +204,31 @@ public partial class PetDetailsViewModel : BaseViewModel
 
             // Change Pet Image
             var index = Pet.Image.LastIndexOf('/');
-            if (index == -1)
-                return;
-            var previousImage = Pet.Image.Substring(index + 1, Pet.Image.Length - index - 1);
-            if (PetImageFile != "" &&  PetImageFile != previousImage) // Save Image
+            if (index != -1)
             {
-                await petService.deletePetImage(Pet.Image);//await petServie.d
-                var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
-                //await petService.deletePetImage(previousImage);//await petServie.d
-                var image = await petService.changePetImage(Pet.Id, imageFilename);
-                Pet.Image = image;
-                PetImageSaved = image;
-                
+                var previousImage = Pet.Image.Substring(index + 1, Pet.Image.Length - index - 1);
+                if (PetImageFile != "" && PetImageFile != previousImage) // Save Image
+                {
+                    await petService.deletePetImage(Pet.Image);//await petServie.d
+                    var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
+                    var image = await petService.changePetImage(Pet.Id, imageFilename);
+                    Pet.Image = image;
+                    PetImageSaved = image;
+
+                }
             }
+            else
+            {
+                if (PetImageFile != "")
+                {
+                    var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
+                    var image = await petService.changePetImage(Pet.Id, imageFilename);
+                    Pet.Image = image;
+                    PetImageSaved = image;
+                }
+
+            }
+           
 
         }
         catch (Exception ex)
@@ -228,60 +242,6 @@ public partial class PetDetailsViewModel : BaseViewModel
             IsBusy = false;
         }
     }
-
-
-    /*
-   [RelayCommand]
-   async Task changePetImageAsync(PickOptions options)
-   {
-        //User will pick an image using XMAL file picker and pass it to this function
-        if(PetImageFile == "")
-        {
-            return;
-        }
-
-
-        //change image name to Profile_<petID>.<extension>
-       // var activities = await petService.GetPetActivities();//Get pets
-
-
-        //call pet services, addPetImage() to upload image to Azure Blob Storage and return image URL
-        //var activities = await petService.GetPetActivities();//Get pets
-
-
-        //call pet services, addPetImageDatabase(), with image URL and petID to put image URL in pet information database table entry with passed petID
-        //returns URL
-
-        //call pet services, deletePetImage() with returned URL from addPetImage() call, to delete old pet profile image if it exists
-    }
-    */
-    /*
-    //User Picks Image From System
-    [RelayCommand]
-    async Task<FileResult> PickImage(PickOptions options)
-    {
-        try
-        {
-            var result = await FilePicker.Default.PickAsync(options);
-            if (result != null)
-            {
-                if (result.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
-                    result.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-                {
-                    
-                    PetImageFile = result.FileName;
-                }
-            }
-
-            return result;
-        }
-        catch (Exception ex)
-        {
-
-            return null; // The user canceled or something went wrong
-        }
-    }
-    */
     
     //User Picks Image From System
     [RelayCommand]
