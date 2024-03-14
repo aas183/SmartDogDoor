@@ -73,7 +73,9 @@
             HorizontalOptions="Center"
             Margin="10"
             Grid.ColumnSpan="2"
-            CornerRadius="20"/>
+            CornerRadius="20"
+            HeightRequest="40"
+            WidthRequest="200"/>
 
         <!--Busy Indicator for Page-->
         <ActivityIndicator 
@@ -95,8 +97,7 @@
                        TextColor="Black"
                        HorizontalTextAlignment="Center"
                        FontSize="25"
-                       Text="Place the Pet's Tag Against the Tag Reader on the Dog Door within
-                            1 minute."
+                       Text="{Binding AddPetDialog}"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="CenterAndExpand"
                        Grid.RowSpan="2"
@@ -107,6 +108,7 @@
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="{StaticResource Accent}"
                         Clicked="cancelAddPet"
+                        Command="{Binding cancelPetAddCommand}"
                         Grid.Row="1"
                         HorizontalOptions="Center"
                         Margin="10"

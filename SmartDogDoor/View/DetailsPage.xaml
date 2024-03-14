@@ -79,6 +79,7 @@
                 <Button
                     x:Name="deleteBtn"
                     IsVisible="False"
+                    Command="{Binding deletePetCommand}"
                     Grid.Column="0"
                     Grid.Row="1"
                     BackgroundColor="{StaticResource Accent}"

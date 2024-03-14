@@ -16,9 +16,9 @@ public partial class MainPage : ContentPage
     {
         //AddPetBtn.IsVisible = false;
         //PetsView.IsVisible = false;
-        AddPetInteraction.IsVisible = true;
+        //AddPetInteraction.IsVisible = true;
 
-        InsLabel.Text = "Place the New Pet's Tag Against the Tag Reader on the Dog Door within\n1 minute.";
+        //InsLabel.Text = "Place the New Pet's Tag Against the Tag Reader on the Dog Door within\n1 minute.";
 
 
     }
@@ -27,6 +27,6 @@ public partial class MainPage : ContentPage
     {
         //AddPetBtn.IsVisible = true;
         //PetsView.IsVisible = true;
-        AddPetInteraction.IsVisible = false;
+        //AddPetInteraction.IsVisible = false;
     }
 }

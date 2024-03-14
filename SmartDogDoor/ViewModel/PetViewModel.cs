@@ -197,21 +197,31 @@ public partial class PetViewModel : BaseViewModel
 
         try
         {
+            AddPetDialog = "Place the Pet's Tag Against the Tag Reader on the Dog Door within\n60 seconds.";
+
+            // Set busy flags
             IsBusy = true;
             IsAddPet = true;
-            var petCount = Pets.Count;
 
+            // Add placeholder pet Id to be seen by door
+            var petCount = Pets.Count;
             await petService.addPet(); // Add new Pet to Database
 
+            // Keep track of 60 seconds
             DateTime startTime, endTime;
             startTime = DateTime.Now;
             endTime = startTime;
             var elapsedTime = (((TimeSpan)(endTime - startTime)).TotalSeconds);
+            var stopTime = 60.0;
+            
+            // Flags to quit
             bool IdAdded = false;
             bool AddCancel = false;
 
+            //AddPetDialog = "Place the Pet's Tag Against the Tag Reader on the Dog Door within\n60 seconds.";
+
             // loop until new Id added or 60 seconds elapses
-            while ((elapsedTime < 60.0) && !IdAdded)
+            while ((elapsedTime < stopTime) && !IdAdded && !AddCancel)
             {
                 IdAdded = await petService.checkForNewId(petCount + 1);
                 AddCancel = await petService.checkForPetIdOfZero();
@@ -220,15 +230,19 @@ public partial class PetViewModel : BaseViewModel
                 elapsedTime = (((TimeSpan)(endTime - startTime)).TotalSeconds);
 
                 Debug.WriteLine($"Still Check = {elapsedTime}");
+                AddPetDialog = $"Place the Pet's Tag Against the Tag Reader on the Dog Door within\n{(int)(stopTime-elapsedTime)} seconds.";
             }
 
-            await petService.deletePet("0");
+            if (!AddCancel)
+            {
+                await petService.deletePet("0");
+                AddPetDialog = "Pet Could Not Be Found.";
+            }
 
             if (IdAdded) // if no tag found delete pet
-            {
-                await GetPetsAsync(); // if found update pet view
+            { 
+                AddPetDialog = "Pet Added Successfully!";
             }
-            
         }
         catch (Exception ex)
         {
@@ -237,7 +251,8 @@ public partial class PetViewModel : BaseViewModel
         finally
         {
             IsBusy = false;//set busy back to false
-            IsAddPet = false;
+            await GetPetsAsync();
+            //IsAddPet = false;
         }
 
         return;
@@ -246,7 +261,9 @@ public partial class PetViewModel : BaseViewModel
     [RelayCommand]
     async Task cancelPetAdd()
     {
-        await petService.deletePet("0");
+        //bool IdCancel = await petService.checkForPetIdOfZero(); // Check if placeholder Id needs cancelled
+        if(!(await petService.checkForPetIdOfZero()))
+            await petService.deletePet("0");
         IsAddPet = false;
     }
 

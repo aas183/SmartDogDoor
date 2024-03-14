@@ -155,7 +155,7 @@ public class PetService
     public async Task deletePet (string id)
     {
         var url = $"https://petconnect.azurewebsites.net/api/deletePet/{id}";
-        Console.Write($"Request Url: {url}");
+        Console.Write($"Request Url: {url}\n");
         var response = await httpClient.DeleteAsync(url);
         //use async for webapi calls
         Console.Write(response);
@@ -192,7 +192,7 @@ public class PetService
 
 
         var url = $"https://petconnect.azurewebsites.net/api/deletePetActivity/{timestamp}";
-        Console.Write($"Request Url: {url}");
+        Console.Write($"Request Url: {url}\n");
         var response = await httpClient.DeleteAsync(url);
         //use async for webapi calls
         Console.Write(response);
@@ -281,7 +281,8 @@ public class PetService
         {
             if (pet.Id == Id)
             {
-                await deletePetImage(pet.Id);
+                if (pet.Image != "")
+                    await deletePetImage(pet.Image);
             }
         }
     }

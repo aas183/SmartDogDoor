@@ -142,8 +142,8 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
 
-    
-    async Task deletePetAsync(string Id)
+    [RelayCommand]
+    async Task deletePetAsync()
     {
         //Prompt user "Are you sure if you want to delete pet from system?" (Yes/No)
 
@@ -152,12 +152,20 @@ public partial class PetDetailsViewModel : BaseViewModel
         //If yes
         //call pet service, deletePetImages(), to delete all images associated Id
         //all pet services, deletePet(), to delete all entries for selected pet's id in pet information and pet activity table
-
-        await petService.deleteAllPetInformation(Id);
+        try
+        {
+            await petService.deleteAllPetInformation(Pet.Id);
+            PetNameSaved = "Pet Deleted!";
+        } 
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await Shell.Current.DisplayAlert("Error!",
+                $"Unable to save changes: {ex.Message}", "OK");
+        }
     }
     
 
-    
    async Task changePetNameAsync()
    {
         //call pet service function chnagePetName() to change name of pet in pet information database table entry with passed petID
@@ -203,30 +211,21 @@ public partial class PetDetailsViewModel : BaseViewModel
             }
 
             // Change Pet Image
-            var index = Pet.Image.LastIndexOf('/');
-            if (index != -1)
+            if (PetImageFile != "" && PetImageFile != PetImageSaved) // Save Image
             {
-                var previousImage = Pet.Image.Substring(index + 1, Pet.Image.Length - index - 1);
-                if (PetImageFile != "" && PetImageFile != previousImage) // Save Image
-                {
-                    await petService.deletePetImage(Pet.Image);//await petServie.d
-                    var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
-                    var image = await petService.changePetImage(Pet.Id, imageFilename);
-                    Pet.Image = image;
-                    PetImageSaved = image;
-
-                }
+                await petService.deletePetImage(Pet.Image);//await petServie.d
+                var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
+                var image = await petService.changePetImage(Pet.Id, imageFilename);
+                Pet.Image = image;
+                PetImageSaved = image;
             }
-            else
+            else if (PetImageFile == "")
             {
-                if (PetImageFile != "")
-                {
-                    var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
-                    var image = await petService.changePetImage(Pet.Id, imageFilename);
-                    Pet.Image = image;
-                    PetImageSaved = image;
-                }
-
+             
+                var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
+                var image = await petService.changePetImage(Pet.Id, imageFilename);
+                Pet.Image = image;
+                PetImageSaved = image;
             }
            
 
