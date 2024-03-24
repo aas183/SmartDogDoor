@@ -1,4 +1,6 @@
-﻿namespace SmartDogDoor.View;
+﻿using Plugin.LocalNotification;
+
+namespace SmartDogDoor.View;
 
 public partial class DetailsPage : ContentPage
 {

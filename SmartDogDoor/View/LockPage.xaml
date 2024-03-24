@@ -19,6 +19,87 @@
         <!-- Display a dropdown box for day, and two edit boxes one for hour and one for minute for end time-->
         <!-- Display a dropdown box for whether the restriciton is for door lock or unlock-->
         <!-- Have a button to save the new restriction-->
-    
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
+        <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
+    </ContentPage.Behaviors>
+
+    <Grid ColumnDefinitions="*,*"
+          ColumnSpacing="5"
+          RowDefinitions="*, Auto"
+          RowSpacing="0">
+
+
+        <CollectionView x:Name="PetsView" 
+                BackgroundColor="Transparent"
+                Grid.ColumnSpan="2"
+                ItemsSource="{Binding Locks}"
+                SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Lock">
+                    <!-- Bind Pet Model to View-->
+                    <Grid Padding="10">
+                        <Frame HeightRequest="100" Padding="0" Style="{StaticResource CardView}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer CommandParameter="{Binding .}" 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:PetViewModel}}, Path=GoToDetailsCommand}"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="0" ColumnDefinitions="125,*">
+                                <Label Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Text="{Binding ruleNumber}" Style="{StaticResource MediumLabel}"/>
+                                <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
+                                    <Label Text="{Binding TimeStart}" Style="{StaticResource MediumLabel}"/>
+                                    <Label Text="-" Style="{StaticResource MediumLabel}"/>
+                                    <Label Text="{Binding TimeStop}" Style="{StaticResource MediumLabel}"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+
+        <Button x:Name="AddAlways"
+                Text="Always Locked"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="{StaticResource Accent}"
+                IsEnabled="{Binding IsNotBusy}"
+                Grid.Row="1"
+                HorizontalOptions="CenterAndExpand"
+                Margin="10"
+                Grid.Column="0"
+                CornerRadius="20"
+                HeightRequest="40"
+                WidthRequest="170"/>
+
+        <Button x:Name="AddLock"
+          Text="Add Restriction"
+          BackgroundColor="{StaticResource Primary}"
+          TextColor="{StaticResource Accent}"
+          IsEnabled="{Binding IsNotBusy}"
+          Grid.Row="1"
+          HorizontalOptions="CenterAndExpand"
+          Margin="10"
+          Grid.Column="1"
+          CornerRadius="20"
+          HeightRequest="40"
+          WidthRequest="170"/>
+
+        <!--Busy Indicator for Page-->
+        <ActivityIndicator 
+       x:Name="BusyIndicator"
+       IsVisible="{Binding IsBusy}"
+       IsRunning="{Binding IsBusy}"
+       Color="{StaticResource Primary}"
+       HorizontalOptions="FillAndExpand"
+       VerticalOptions="CenterAndExpand"
+       Grid.RowSpan="2"
+       Grid.ColumnSpan="2"/>
+
+
+    </Grid>
+
+   
+
 
 </ContentPage>

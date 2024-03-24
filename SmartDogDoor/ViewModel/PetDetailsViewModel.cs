@@ -156,6 +156,8 @@ public partial class PetDetailsViewModel : BaseViewModel
         {
             await petService.deleteAllPetInformation(Pet.Id);
             PetNameSaved = "Pet Deleted!";
+            PetName = "";
+            PetImageFile = "";
         } 
         catch (Exception ex)
         {

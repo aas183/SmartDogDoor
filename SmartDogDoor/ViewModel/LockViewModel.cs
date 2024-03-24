@@ -1,4 +1,6 @@
-﻿using SmartDogDoor.Services;
+﻿using Microsoft.Maui.Storage;
+using SmartDogDoor.Services;
+using System;
 using System.Diagnostics;
 
 namespace SmartDogDoor.ViewModel;
@@ -11,6 +13,7 @@ public partial class LockViewModel : BaseViewModel
     {
         Title = "Access";
         this.petService = petService;
+        GetLocksAsync();
     }
 
 
@@ -27,8 +30,32 @@ public partial class LockViewModel : BaseViewModel
             if(Locks.Count != 0)
                 Locks.Clear();
 
-            foreach (var lock_ in locks)
-                Locks.Add(lock_);
+            int count = 1;
+            foreach (var lockRule in locks)
+            {
+                // set rule number
+                lockRule.ruleNumber = count;
+                
+                // parse time start information
+                int index1 = lockRule.TimeStart.IndexOf("_");
+                int index2 = lockRule.TimeStart.LastIndexOf("_");
+                lockRule.TimeStartDay = lockRule.TimeStart.Substring(0, index1);
+                lockRule.TimeStartHour = lockRule.TimeStart.Substring(index1, index2-index1);
+                lockRule.TimeStartMinute = lockRule.TimeStart.Substring(index2, lockRule.TimeStart.Length - index2 -1);
+
+                // parse time stop information
+                index1 = lockRule.TimeStop.IndexOf("_");
+                index2 = lockRule.TimeStop.LastIndexOf("_");
+                lockRule.TimeStopDay = lockRule.TimeStop.Substring(0, index1);
+                lockRule.TimeStopHour = lockRule.TimeStop.Substring(index1, index2 - index1);
+                lockRule.TimeStopMinute = lockRule.TimeStop.Substring(index2, lockRule.TimeStop.Length - index2 - 1);
+
+                // Add Rule to Lock list
+                Locks.Add(lockRule);
+                
+                // Increase rule count
+                count++;
+            }
         }
         catch (Exception ex)
         {

@@ -36,6 +36,8 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
+    bool firstAppear = false;
+
     public ActivityViewModel(PetService petService)
     {
         Title = "Activity";
@@ -47,59 +49,62 @@ public partial class ActivityViewModel : BaseViewModel
     [RelayCommand]
     async Task GetActivitiesAsync ()
     {
-        if(IsBusy) return;
-
-        try
-        {
-            IsBusy = true;
-            var activities = await petService.GetPetActivities();
+        //while(true)
+        //{ 
+            try
+            {
+                IsBusy = true;
+                var activities = await petService.GetPetActivities();
             
-            if(Activities.Count != 0)
-            {
-                Activities.Clear();
-                FilteredActivities.Clear();
-            }
-            /*
-            var selectedPetId;
-            if (SelectedFilterIndex == 1)
-            {
-                selectedPetId = _selectedPet.Id;
-            }
-            */
-
-            foreach (var activity in activities)
-            {
-                Activities.Insert(0,activity);
-                if (SelectedFilterIndex == 0)
+                if(Activities.Count != 0)
                 {
-                    FilteredActivities.Insert(0, activity);
+                    Activities.Clear();
+                    FilteredActivities.Clear();
                 }
-                else
+                /*
+                var selectedPetId;
+                if (SelectedFilterIndex == 1)
                 {
-                    if (_selectedPet != null && activity.Id == _selectedPet.Id)
+                    selectedPetId = _selectedPet.Id;
+                }
+                */
+
+                foreach (var activity in activities)
+                {
+                    Activities.Insert(0,activity);
+                    if (SelectedFilterIndex == 0)
                     {
                         FilteredActivities.Insert(0, activity);
                     }
+                    else
+                    {
+                        if (_selectedPet != null && activity.Id == _selectedPet.Id)
+                        {
+                            FilteredActivities.Insert(0, activity);
+                        }
+                    }
                 }
-            }
                
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex);
-            await Shell.Current.DisplayAlert("Error!",
-                $"Unable to get pets: {ex.Message}", "OK");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await Shell.Current.DisplayAlert("Error!",
+                    $"Unable to get pets: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        //  Thread.Sleep(5000);
+        //}
     }
 
     //Get Details from pet Information Page
     [RelayCommand]
     async Task GetPetsAsync()
     {
+       
         //If data pull is already occurring quit
         if (IsBusy) return;
 
@@ -218,7 +223,12 @@ public partial class ActivityViewModel : BaseViewModel
 
             //await GetPetsLocal();
             GetPetsLocal();
-            await GetActivitiesAsync();
+           // if(!firstAppear)
+            //{
+            //    firstAppear = true;
+                await GetActivitiesAsync();
+            //}
+            
             //await GetPetsAsync();
             
         }

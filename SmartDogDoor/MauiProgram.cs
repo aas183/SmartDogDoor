@@ -2,6 +2,7 @@
 using SmartDogDoor.Services;
 using SmartDogDoor.View;
 using CommunityToolkit.Maui;
+using Plugin.LocalNotification;
 
 namespace SmartDogDoor;
 
@@ -13,6 +14,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
+            .UseLocalNotification()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

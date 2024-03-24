@@ -10,6 +10,7 @@ using Azure.Storage.Blobs.Specialized;
 using CommunityToolkit.Maui.Converters;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using Plugin.LocalNotification;
 
 
 
@@ -224,12 +225,27 @@ public class PetService
         if (fileType == "png")
         {
             file.Headers.Add("Content-Type", "image/png");
-            saveFilename = $"Profile_{petName}.png";
+            if(petName.IndexOf(".png") != -1)
+            {
+                saveFilename = $"Profile_{petName}";
+            }
+            else
+            {
+                saveFilename = $"Profile_{petName}.png";
+            }
+            
         }
         else
         {
             file.Headers.Add("Content-Type", "image/jpeg");
-            saveFilename = $"Profile_{petName}.jpg";
+            if (petName.IndexOf(".jpg") != -1)
+            {
+                saveFilename = $"Profile_{petName}";
+            }
+            else
+            {
+                saveFilename = $"Profile_{petName}.jpg";
+            }
         }
            
         multipartContent.Add(file, "file", saveFilename);
@@ -241,7 +257,7 @@ public class PetService
         return saveFilename;
     }
 
-    // Chnage Pet Profile Image for passed pet in database
+    // Change Pet Profile Image for passed pet in database
     public async Task<String> changePetImage(string id, string filename)
     {
         var url = $"https://petconnect.azurewebsites.net/api/pet/{id}/image/{filename}";
@@ -310,6 +326,7 @@ public class PetService
     //Function for getting entries from Pet Activity database table.
     public async Task<List<PetActivity>> GetPetActivities()
     {
+        int numberOldActivity = petActivityList.Count();
         petActivityList.Clear();//clear current pet list
 
         //Eventually add check for new activity 
@@ -323,6 +340,7 @@ public class PetService
             Console.Write(response.Content);
             petActivityList = await response.Content.ReadFromJsonAsync<List<PetActivity>>();
             petActivityListRaw = petActivityList;
+            var numberNewActivity = petActivityList.Count() - numberOldActivity;
 
             //Get InOut Colors
             foreach (var activity in petActivityList)
@@ -361,7 +379,36 @@ public class PetService
                 dateTimeOffset = dateTimeOffset.ToLocalTime();
                 activity.TimeStamp = dateTimeOffset.DateTime.ToString();
             }
+
+            // Send Notifications 
+            if (numberOldActivity != 0)
+            {
+                for (int i = 0; i < numberNewActivity; i++)
+                {
+                    //if (!LocalNotificationCenter.Current.AreNotificationsEnabled().Result)
+                    //{
+                    //    await LocalNotificationCenter.Current.RequestNotificationPermission();
+                    //}
+                    var request = new NotificationRequest
+                    {
+                        NotificationId = (1000 + i),
+                        Title = "Pet Activity Detected",
+                        //Subtitle = "Hello Friends",
+                        Description = $"{petActivityList[petActivityList.Count() - numberNewActivity].Name} detected going {petActivityList[petActivityList.Count() - numberNewActivity].InOut} at {petActivityList[petActivityList.Count() - numberNewActivity].TimeStamp}",
+                        //Image = $"{petActivityList[petActivityList.Count() - numberNewActivity].Image}",
+                        BadgeNumber = 42,
+                        /*Schedule = new NotificationRequestSchedule
+                        {
+                            NotifyTime = DateTime.Now,
+                        }*/
+                    };
+                    await LocalNotificationCenter.Current.Show(request);
+                }
+            }
         }
+
+        //Debug.WriteLine("Notification Enabled?");
+        //Debug.WriteLine(LocalNotificationCenter.Current.AreNotificationsEnabled().Result);
 
         return petActivityList;
     }
@@ -374,7 +421,7 @@ public class PetService
 
         //Eventually add check for new activity 
 
-        var url = "https://petconnect.azurewebsites.net/api/petActivity";
+        var url = "https://petconnect.azurewebsites.net/api/lockRestriction";
 
         var response = await httpClient.GetAsync(url);
         //use async for webapi calls
