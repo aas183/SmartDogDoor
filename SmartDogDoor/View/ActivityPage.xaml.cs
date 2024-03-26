@@ -26,11 +26,4 @@ public partial class ActivityPage : ContentPage
             petPicker.IsVisible = true;
         }
     }
-
-    /*
-    void OnPetPickerSelectedIndexChanged(object sender, EventArgs e)
-    {
-        //ViewModel.filterActivity();
-    }
-    */
 }

@@ -215,7 +215,7 @@ public partial class PetDetailsViewModel : BaseViewModel
             // Change Pet Image
             if (PetImageFile != "" && PetImageFile != PetImageSaved) // Save Image
             {
-                await petService.deletePetImage(Pet.Image);//await petServie.d
+                await petService.deletePetImage(Pet.Image);//delete current pet image
                 var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
                 var image = await petService.changePetImage(Pet.Id, imageFilename);
                 Pet.Image = image;
@@ -236,7 +236,7 @@ public partial class PetDetailsViewModel : BaseViewModel
         {
             Debug.WriteLine(ex);
             await Shell.Current.DisplayAlert("Error!",
-                $"Unable to save changes: {ex.Message}", "OK");
+                $"Unable to save changes to pet information: {ex.Message}", "OK");
         }
         finally
         {

@@ -306,6 +306,7 @@ public class PetService
     // delete specified image in database (blob storage)
     public async Task deletePetImage(string image)
     {
+        //check if image is currently in database before deleteing it.
 
         var index = image.LastIndexOf('/');
         if (index == -1)
@@ -380,7 +381,7 @@ public class PetService
                 activity.TimeStamp = dateTimeOffset.DateTime.ToString();
             }
 
-            // Send Notifications 
+            // Send Notifications (Possibly update to include pet image in notification this may be difficult....)
             if (numberOldActivity != 0)
             {
                 for (int i = 0; i < numberNewActivity; i++)

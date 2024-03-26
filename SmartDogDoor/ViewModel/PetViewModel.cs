@@ -7,7 +7,7 @@ public partial class PetViewModel : BaseViewModel
     public ObservableCollection<Pet> Pets { get; } = new();//Data Collection of data from Database
 
     // for keeping track of pet being added
-    private bool _isAddPet;
+    private bool _isAddPet = false;
 
     public bool IsAddPet
     {
@@ -43,7 +43,7 @@ public partial class PetViewModel : BaseViewModel
     {
         Title = "Pets";
         this.petService = petService;
-        IsAddPet = false;
+        //IsAddPet = false;
         //GetPetsAsync();
     }
 
