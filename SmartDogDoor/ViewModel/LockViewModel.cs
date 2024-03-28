@@ -28,7 +28,35 @@ public partial class LockViewModel : BaseViewModel
     }
 
     //Bool to keep track of edit or add function used (true edit, false add)
-    private bool isEditAdd;
+    private bool _isEditAdd;
+    public bool IsEditAdd
+    {
+        get
+        {
+            return _isEditAdd;
+        }
+        set
+        {
+            _isEditAdd = value;
+            OnPropertyChanged(nameof(IsEditAdd));
+            //filterActivity();
+        }
+    }
+
+    //Bool to keep track of always locked (true always locked enabled)
+    private bool _isNotAlwaysLocked;
+    public bool IsNotAlwaysLocked
+    {
+        get
+        {
+            return _isNotAlwaysLocked;
+        }
+        set
+        {
+            _isNotAlwaysLocked = value;
+            OnPropertyChanged(nameof(IsNotAlwaysLocked));
+        }
+    }
 
     private int _selectedRuleStartDayIndex = 0;
     public int SelectedRuleStartDayIndex
@@ -151,6 +179,8 @@ public partial class LockViewModel : BaseViewModel
         }
     }
 
+    private int selectedRuleId;
+
     public LockViewModel(PetService petService)
     {
         Title = "Access";
@@ -172,247 +202,73 @@ public partial class LockViewModel : BaseViewModel
             if(Locks.Count != 0)
                 Locks.Clear();
 
+            IsNotAlwaysLocked = true; // Check for always locked condition
+
             int count = 1;
             foreach (var lockRule in locks)
             {
-                // set rule number
-                lockRule.ruleNumber = count;
-
-                // parse time start information
-                /*
-                int index1 = lockRule.TimeStart.IndexOf("_");
-                int index2 = lockRule.TimeStart.LastIndexOf("_");
-                lockRule.TimeStartDay = lockRule.TimeStart.Substring(0, index1);
-                lockRule.TimeStartHour = lockRule.TimeStart.Substring(index1+1, index2-index1-1);
-                lockRule.TimeStartMinute = lockRule.TimeStart.Substring(index2+1, lockRule.TimeStart.Length-index2-1);
-                */
-
-                //Convert Information to display format
-                // Convert Hour
-                switch (lockRule.TimeStartHour)
+                if (lockRule.Id == -1)
                 {
-                    case "0":
-                        lockRule.TimeStartHour = "12";
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "1":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "2":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "3":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "4":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "5":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "6":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "7":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "8":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "9":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "10":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "11":
-                        lockRule.TimeStartAM_PM = "AM";
-                        break;
-                    case "12":
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "13":
-                        lockRule.TimeStartHour = "1";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "14":
-                        lockRule.TimeStartHour = "2";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "15":
-                        lockRule.TimeStartHour = "3";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "16":
-                        lockRule.TimeStartHour = "4";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "17":
-                        lockRule.TimeStartHour = "5";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "18":
-                        lockRule.TimeStartHour = "6";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "19":
-                        lockRule.TimeStartHour = "7";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "20":
-                        lockRule.TimeStartHour = "8";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "21":
-                        lockRule.TimeStartHour = "9";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "22":
-                        lockRule.TimeStartHour = "10";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    case "23":
-                        lockRule.TimeStartHour = "11";
-                        lockRule.TimeStartAM_PM = "PM";
-                        break;
-                    default:
-                        break;
-                }
-                //Convvert Day
-                String day = lockRule.TimeStartDay;
-                ConvertNumberToDay(ref day);
-                lockRule.TimeStartDay = day;
-
-                if(lockRule.TimeStartMinute.Length == 1)
-                {
-                    lockRule.TimeStartDisplay = $"{lockRule.TimeStartDay} {lockRule.TimeStartHour}:0{lockRule.TimeStartMinute} {lockRule.TimeStartAM_PM}";
+                    IsNotAlwaysLocked = false;
+                    Title = "Access (Always Locked Enabled)";
                 }
                 else
                 {
-                    lockRule.TimeStartDisplay = $"{lockRule.TimeStartDay} {lockRule.TimeStartHour}:{lockRule.TimeStartMinute} {lockRule.TimeStartAM_PM}";
+                    // set rule number
+                    lockRule.ruleNumber = count;
+
+                    //Convert Information to display format
+                    // Convert Hour
+                    String hour = lockRule.TimeStartHour;
+                    String am_pm = "";
+                    ConvertMilitaryToHour(ref hour, ref am_pm);
+                    lockRule.TimeStartHour = hour;
+                    lockRule.TimeStartAM_PM = am_pm;
+                    
+                    //Convert Day
+                    String day = lockRule.TimeStartDay;
+                    ConvertNumberToDay(ref day);
+                    lockRule.TimeStartDay = day;
+
+                    if(lockRule.TimeStartMinute.Length == 1)
+                    {
+                        lockRule.TimeStartDisplay = $"{lockRule.TimeStartDay} {lockRule.TimeStartHour}:0{lockRule.TimeStartMinute} {lockRule.TimeStartAM_PM}";
+                    }
+                    else
+                    {
+                        lockRule.TimeStartDisplay = $"{lockRule.TimeStartDay} {lockRule.TimeStartHour}:{lockRule.TimeStartMinute} {lockRule.TimeStartAM_PM}";
+                    }
+
+                    //Convert Information to display format
+                    // Convert Hour
+                    hour = lockRule.TimeStopHour;
+                    am_pm = "";
+                    ConvertMilitaryToHour(ref hour, ref am_pm);
+                    lockRule.TimeStopHour = hour;
+                    lockRule.TimeStopAM_PM = am_pm;
+                    
+                    //Convert Day
+                    day = lockRule.TimeStopDay;
+                    ConvertNumberToDay(ref day);
+                    lockRule.TimeStopDay = day;
+                    Debug.WriteLine("\n\n Day");
+                    Debug.WriteLine(lockRule.TimeStopDay);
+
+                    if (lockRule.TimeStopMinute.Length == 1)
+                    {
+                        lockRule.TimeStopDisplay = $"{lockRule.TimeStopDay} {lockRule.TimeStopHour}:0{lockRule.TimeStopMinute} {lockRule.TimeStopAM_PM}";
+                    }
+                    else
+                    {
+                        lockRule.TimeStopDisplay = $"{lockRule.TimeStopDay} {lockRule.TimeStopHour}:{lockRule.TimeStopMinute} {lockRule.TimeStopAM_PM}";
+                    }
+                    // Add Rule to Lock list
+                    Locks.Add(lockRule);
+                
+                    // Increase rule count
+                    count++;
                 }
                 
-
-                // parse time stop information
-                /*
-                index1 = lockRule.TimeStop.IndexOf("_");
-                index2 = lockRule.TimeStop.LastIndexOf("_");
-                lockRule.TimeStopDay = lockRule.TimeStop.Substring(0, index1);
-                lockRule.TimeStopHour = lockRule.TimeStop.Substring(index1+1, index2-index1-1);
-                lockRule.TimeStopMinute = lockRule.TimeStop.Substring(index2+1, lockRule.TimeStop.Length-index2-1);
-                */
-
-                //Convert Information to display format
-                // Convert Hour
-                switch (lockRule.TimeStopHour)
-                {
-                    case "0":
-                        lockRule.TimeStopHour = "12";
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "1":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "2":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "3":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "4":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "5":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "6":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "7":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "8":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "9":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "10":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "11":
-                        lockRule.TimeStopAM_PM = "AM";
-                        break;
-                    case "12":
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "13":
-                        lockRule.TimeStopHour = "1";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "14":
-                        lockRule.TimeStopHour = "2";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "15":
-                        lockRule.TimeStopHour = "3";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "16":
-                        lockRule.TimeStopHour = "4";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "17":
-                        lockRule.TimeStartHour = "5";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "18":
-                        lockRule.TimeStopHour = "6";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "19":
-                        lockRule.TimeStopHour = "7";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "20":
-                        lockRule.TimeStopHour = "8";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "21":
-                        lockRule.TimeStopHour = "9";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "22":
-                        lockRule.TimeStopHour = "10";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    case "23":
-                        lockRule.TimeStopHour = "11";
-                        lockRule.TimeStopAM_PM = "PM";
-                        break;
-                    default:
-                        break;
-                }
-                //Convvert Day
-                day = lockRule.TimeStopDay;
-                ConvertNumberToDay(ref day);
-                lockRule.TimeStopDay = day;
-                Debug.WriteLine("\n\n Day");
-                Debug.WriteLine(lockRule.TimeStopDay);
-
-                if (lockRule.TimeStopMinute.Length == 1)
-                {
-                    lockRule.TimeStopDisplay = $"{lockRule.TimeStopDay} {lockRule.TimeStopHour}:0{lockRule.TimeStopMinute} {lockRule.TimeStopAM_PM}";
-                }
-                else
-                {
-                    lockRule.TimeStopDisplay = $"{lockRule.TimeStopDay} {lockRule.TimeStopHour}:{lockRule.TimeStopMinute} {lockRule.TimeStopAM_PM}";
-                }
-                // Add Rule to Lock list
-                Locks.Add(lockRule);
-                
-                // Increase rule count
-                count++;
             }
         }
         catch (Exception ex)
@@ -430,35 +286,40 @@ public partial class LockViewModel : BaseViewModel
     [RelayCommand]
     async Task EditRule(Lock restriction)
     {
-        // Set Start Rule
-        SelectedRuleStartDayIndex = ConvertDayToNumber(restriction.TimeStartDay);
-        SelectedRuleStartHour = restriction.TimeStartHour;
-        SelectedRuleStartMinute = restriction.TimeStartMinute;
-        if(restriction.TimeStartAM_PM == "AM")
+        if(IsNotAlwaysLocked && !IsEditLocks)
         {
-            SelectedRuleStartAMPMIndex = 0;
-        }
-        else
-        {
-            SelectedRuleStartAMPMIndex = 1;
-        }
+            // Set Start Rule
+            selectedRuleId = restriction.Id;
+            SelectedRuleStartDayIndex = ConvertDayToNumber(restriction.TimeStartDay);
+            SelectedRuleStartHour = restriction.TimeStartHour;
+            SelectedRuleStartMinute = restriction.TimeStartMinute;
+            if(restriction.TimeStartAM_PM == "AM")
+            {
+                SelectedRuleStartAMPMIndex = 0;
+            }
+            else
+            {
+                SelectedRuleStartAMPMIndex = 1;
+            }
 
-        // Set Stop Rule
-        SelectedRuleStopDayIndex = ConvertDayToNumber(restriction.TimeStopDay);
-        SelectedRuleStopHour = restriction.TimeStopHour;
-        SelectedRuleStopMinute = restriction.TimeStopMinute;
-        if (restriction.TimeStopAM_PM == "AM")
-        {
-            SelectedRuleStopAMPMIndex = 0;
-        }
-        else
-        {
-            SelectedRuleStopAMPMIndex = 1;
-        }
+            // Set Stop Rule
+            SelectedRuleStopDayIndex = ConvertDayToNumber(restriction.TimeStopDay);
+            SelectedRuleStopHour = restriction.TimeStopHour;
+            SelectedRuleStopMinute = restriction.TimeStopMinute;
+            if (restriction.TimeStopAM_PM == "AM")
+            {
+                SelectedRuleStopAMPMIndex = 0;
+            }
+            else
+            {
+                SelectedRuleStopAMPMIndex = 1;
+            }
 
-        IsEditLocks = true;
+            IsEditAdd = true;
 
-        isEditAdd = true;
+            IsEditLocks = true;
+        }
+        
 
     }
 
@@ -471,48 +332,152 @@ public partial class LockViewModel : BaseViewModel
     [RelayCommand]
     async Task AddRule()
     {
-        // Set Start Rule
-        SelectedRuleStartDayIndex = 0;
-        SelectedRuleStartHour = "12";
-        SelectedRuleStartMinute = "0";
-        SelectedRuleStartAMPMIndex = 1;
+        if(!IsEditLocks)
+        {
+            // Set Start Rule
+            SelectedRuleStartDayIndex = 0;
+            SelectedRuleStartHour = "12";
+            SelectedRuleStartMinute = "0";
+            SelectedRuleStartAMPMIndex = 1;
         
 
-        // Set Stop Rule
-        SelectedRuleStopDayIndex = 1;
-        SelectedRuleStopHour = "12";
-        SelectedRuleStopMinute = "0";
-        SelectedRuleStopAMPMIndex = 0;
+            // Set Stop Rule
+            SelectedRuleStopDayIndex = 1;
+            SelectedRuleStopHour = "12";
+            SelectedRuleStopMinute = "0";
+            SelectedRuleStopAMPMIndex = 0;
+
+            IsEditAdd = false;
+
+            IsEditLocks = true;
+        }
         
-
-        IsEditLocks = true;
-
-        isEditAdd = false;
     }
 
-    /*
-    async Task addRestrictionAsync(string timeStart, string timeStop, bool lockUnlock )
+    [RelayCommand]
+    async Task DeleteRule()
     {
-        //call pet service, addLock(), with the passed parameters
-        //this will add entry in table
+        try
+        {
+            await petService.deleteLock(selectedRuleId);
 
-        //call pet service, getLocks(), to update observable collection, which will update the page_
- 
+            await GetLocksAsync();
+
+            IsEditLocks = false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await Shell.Current.DisplayAlert("Error!",
+                $"Unable to delete Rule: {ex.Message}", "OK");
+        }
+        
     }
-    */
 
-    /*
-    async Task deleteRestrictionAsync(Lock lock)
+    [RelayCommand]
+    async Task SaveLockRule()
     {
-        //Prompt the user "Are you sure you want to delete the locking restriction?" (yes/no)
+        try
+        {
+            if(IsEditAdd) // edit current rule
+            {
+                // For for input Validity
+                if ((Int32.Parse(SelectedRuleStartHour) > 12 || Int32.Parse(SelectedRuleStartHour) < 1) || (Int32.Parse(SelectedRuleStartMinute) > 59 || Int32.Parse(SelectedRuleStartMinute) < 0) || (Int32.Parse(SelectedRuleStopHour) > 12 || Int32.Parse(SelectedRuleStopHour) < 1) || (Int32.Parse(SelectedRuleStopMinute) > 59 || Int32.Parse(SelectedRuleStopMinute) < 0))
+                {
+                    return;
+                }
 
-        //call pet service, deleteLock(), with the passed Lock object
-        //this will delete entry in table
+                // Make new lock to pass to add lock
+                Lock editLock = new Lock();
+                editLock.Id = selectedRuleId;
+                editLock.TimeStartDay = $"{SelectedRuleStartDayIndex}";
+                editLock.TimeStartHour = $"{ConvertHourToMilitary(SelectedRuleStartHour, SelectedRuleStartAMPMIndex)}";
+                editLock.TimeStartMinute = SelectedRuleStartMinute;
+                editLock.TimeStopDay = $"{SelectedRuleStopDayIndex}";
+                editLock.TimeStopHour = $"{ConvertHourToMilitary(SelectedRuleStopHour, SelectedRuleStopAMPMIndex)}";
+                editLock.TimeStopMinute = SelectedRuleStopMinute;
 
-        //call pet service, getLocks(), to update observable collection, which will update the page
+                await petService.deleteLock(selectedRuleId); // delete old lock
+
+                await petService.addLock(editLock); // add new lock
+
+            }
+            else // add new rule
+            {
+                // For for input Validity
+                if ((Int32.Parse(SelectedRuleStartHour) > 12 || Int32.Parse(SelectedRuleStartHour) < 1) || (Int32.Parse(SelectedRuleStartMinute) > 59 || Int32.Parse(SelectedRuleStartMinute) < 0) || (Int32.Parse(SelectedRuleStopHour) > 12 || Int32.Parse(SelectedRuleStopHour) < 1) || (Int32.Parse(SelectedRuleStopMinute) > 59 || Int32.Parse(SelectedRuleStopMinute) < 0))
+                {
+                    return;
+                }
+
+                // Make new lock to pass to add lock
+                Lock editLock = new Lock();
+                editLock.Id = Locks[Locks.Count-1].Id+1; // set Id to highest current id + 1
+                editLock.TimeStartDay = $"{SelectedRuleStartDayIndex}";
+                editLock.TimeStartHour = $"{ConvertHourToMilitary(SelectedRuleStartHour, SelectedRuleStartAMPMIndex)}";
+                editLock.TimeStartMinute = SelectedRuleStartMinute;
+                editLock.TimeStopDay = $"{SelectedRuleStopDayIndex}";
+                editLock.TimeStopHour = $"{ConvertHourToMilitary(SelectedRuleStopHour, SelectedRuleStopAMPMIndex)}";
+                editLock.TimeStopMinute = SelectedRuleStopMinute;
+                await petService.addLock(editLock); // add new lock
+            }
+
+            await GetLocksAsync();
+
+            IsEditLocks = false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await Shell.Current.DisplayAlert("Error!",
+                $"Unable to save lock rule: {ex.Message}", "OK");
+        }
+
     }
-    */
 
+    // Function to control always locked functionality
+    [RelayCommand]
+    async Task AlwaysLockedRule() 
+    {
+        if(IsEditLocks)
+        { 
+            return; 
+        }
+        try
+        {
+            if(!IsNotAlwaysLocked) // disable always locked
+            {
+                Title = "Access";
+                IsNotAlwaysLocked = true;
+                await petService.deleteLock(-1);
+            }
+            else // enable always locked
+            {
+                Title = "Access (Always Locked Enabled)";
+                Lock alwaysLocked = new Lock();
+                alwaysLocked.Id = -1;
+                alwaysLocked.TimeStartDay = "";
+                alwaysLocked.TimeStartHour = "";
+                alwaysLocked.TimeStartMinute = "";
+                alwaysLocked.TimeStopDay = "";
+                alwaysLocked.TimeStopHour = "";
+                alwaysLocked.TimeStopMinute = "";
+
+                await petService.addLock(alwaysLocked);
+
+                IsNotAlwaysLocked = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await Shell.Current.DisplayAlert("Error!",
+                $"Unable to change always locked rule: {ex.Message}", "OK");
+        }
+
+    }
+
+    // Convert day of week to number to be stored in database
     private int ConvertDayToNumber(String day)
     {
         switch (day)
@@ -535,6 +500,8 @@ public partial class LockViewModel : BaseViewModel
                 return -1;
         }
     }
+
+    // Convert Number stored to database to day of week
     private void ConvertNumberToDay(ref String day)
     {
         switch (day)
@@ -562,6 +529,218 @@ public partial class LockViewModel : BaseViewModel
                 return;
             default:
                 return;
+        }
+    }
+
+    // Convert Miltary Time to Standard Time
+    private void ConvertMilitaryToHour(ref String hour, ref String AM_PM)
+    {
+        switch (hour)
+        {
+            case "0":
+                hour = "12";
+                AM_PM = "AM";
+                return;
+            case "1":
+                AM_PM = "AM";
+                return;
+            case "2":
+                AM_PM = "AM";
+                return;
+            case "3":
+                AM_PM = "AM";
+                return;
+            case "4":
+                AM_PM = "AM";
+                return;
+            case "5":
+                AM_PM = "AM";
+                return;
+            case "6":
+                AM_PM = "AM";
+                return;
+            case "7":
+                AM_PM = "AM";
+                return;
+            case "8":
+                AM_PM = "AM";
+                return;
+            case "9":
+                AM_PM = "AM";
+                return;
+            case "10":
+                AM_PM = "AM";
+                return;
+            case "11":
+                AM_PM = "AM";
+                return;
+            case "12":
+                AM_PM = "PM";
+                return;
+            case "13":
+                hour = "1";
+                AM_PM = "PM";
+                return;
+            case "14":
+                hour = "2";
+                AM_PM = "PM";
+                return;
+            case "15":
+                hour = "3";
+                AM_PM = "PM";
+                return;
+            case "16":
+                hour = "4";
+                AM_PM = "PM";
+                return;
+            case "17":
+                hour = "5";
+                AM_PM = "PM";
+                return;
+            case "18":
+                hour = "6";
+                AM_PM = "PM";
+                return;
+            case "19":
+                hour = "7";
+                AM_PM = "PM";
+                return;
+            case "20":
+                hour = "8";
+                AM_PM = "PM";
+                return;
+            case "21":
+                hour = "9";
+                AM_PM = "PM";
+                return;
+            case "22":
+                hour = "10";
+                AM_PM = "PM";
+                return;
+            case "23":
+                hour = "11";
+                AM_PM = "PM";
+                return;
+            default:
+                return;
+        }
+    }
+
+    // Convert Standard Time to Military Time
+    private int ConvertHourToMilitary(String hour, int AM_PM)
+    {
+        switch (hour)
+        {
+            case "1":
+                if(AM_PM == 0) // AM/PM is AM
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 13;
+                }
+            case "2":
+                if (AM_PM == 0)
+                {
+                    return 2;
+                }
+                else
+                {
+                    return 14;
+                }
+            case "3":
+                if (AM_PM == 0)
+                {
+                    return 3;
+                }
+                else
+                {
+                    return 15;
+                }
+            case "4":
+                if (AM_PM == 0)
+                {
+                    return 4;
+                }
+                else
+                {
+                    return 16;
+                }
+            case "5":
+                if (AM_PM == 0)
+                {
+                    return 5;
+                }
+                else
+                {
+                    return 17;
+                }
+            case "6":
+                if (AM_PM == 0)
+                {
+                    return 6;
+                }
+                else
+                {
+                    return 18;
+                }
+            case "7":
+                if (AM_PM == 0)
+                {
+                    return 7;
+                }
+                else
+                {
+                    return 19;
+                }
+            case "8":
+                if (AM_PM == 0)
+                {
+                    return 8;
+                }
+                else
+                {
+                    return 20;
+                }
+            case "9":
+                if (AM_PM == 0)
+                {
+                    return 9;
+                }
+                else
+                {
+                    return 21;
+                }
+            case "10":
+                if (AM_PM == 0)
+                {
+                    return 10;
+                }
+                else
+                {
+                    return 22;
+                }
+            case "11":
+                if(AM_PM == 0)
+                {
+                    return 11;
+                }
+                else
+                {
+                    return 23;
+                }
+            case "12":
+                if (AM_PM == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 12;
+                }
+            default:
+                return -1;
         }
     }
 }

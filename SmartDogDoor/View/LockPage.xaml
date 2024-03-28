@@ -29,7 +29,7 @@
             <Setter Property="TextColor" Value="Red" />
         </Style>
         <Style x:Key="ValidEntryStyle" TargetType="Entry">
-            <Setter Property="TextColor" Value="Green" />
+            <Setter Property="TextColor" Value="Black" />
         </Style>
     </ContentPage.Resources>
 
@@ -38,7 +38,7 @@
           RowDefinitions="*, Auto"
           RowSpacing="0"
           x:Name="RuleGrid">
-        
+
 
 
         <CollectionView x:Name="LocksView" 
@@ -55,9 +55,10 @@
                                 <TapGestureRecognizer CommandParameter="{Binding .}" 
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:LockViewModel}}, Path=EditRuleCommand}"/>
                             </Frame.GestureRecognizers>
-                            <Grid Padding="0" ColumnDefinitions="125,*">
-                                <Label Grid.Column="0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Text="{Binding ruleNumber}" FontSize="45" TextColor="{StaticResource Primary}"/>
-                                <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Center">
+                            <Grid Padding="0" ColumnDefinitions="125, 25, *">
+                                <Image Grid.Column="0" Source="not_allowed_symbol.svg" HeightRequest="65" />
+                                <Label Grid.Column="1" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Text="{Binding ruleNumber}" FontSize="45" TextColor="{StaticResource Primary}"/>
+                                <VerticalStackLayout Grid.Column="2" Padding="10" VerticalOptions="Center">
                                     <Label Text="{Binding TimeStartDisplay}" Style="{StaticResource MediumLabel}" HorizontalOptions="Center"/>
                                     <Label Text="-" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" />
                                     <Label Text="{Binding TimeStopDisplay}" Style="{StaticResource MediumLabel}" HorizontalOptions="Center"/>
@@ -75,6 +76,7 @@
                 BackgroundColor="{StaticResource Primary}"
                 TextColor="{StaticResource Accent}"
                 IsEnabled="{Binding IsNotBusy}"
+                Command="{Binding AlwaysLockedRuleCommand}"
                 Grid.Row="1"
                 HorizontalOptions="CenterAndExpand"
                 Margin="10"
@@ -87,7 +89,7 @@
                 Text="Add Restriction"
                 BackgroundColor="{StaticResource Primary}"
                 TextColor="{StaticResource Accent}"
-                IsEnabled="{Binding IsNotBusy}"
+                IsEnabled="{Binding IsNotAlwaysLocked}"
                 Command="{Binding AddRuleCommand}"
                 Grid.Row="1"
                 HorizontalOptions="CenterAndExpand"
@@ -108,15 +110,16 @@
                Grid.RowSpan="2"
                Grid.ColumnSpan="2"/>
 
-        <Grid x:Name="EditLockInfo" IsVisible ="{Binding IsEditLocks}" Grid.ColumnSpan="2" Padding="15" ColumnDefinitions="Auto, *, Auto">h
-            <Frame HeightRequest="400" Padding="0" Style="{StaticResource CardView}" BackgroundColor="{StaticResource Primary}" Grid.ColumnSpan="2">
+        <Grid x:Name="EditLockInfo" IsVisible ="{Binding IsEditLocks}" Grid.ColumnSpan="2" Padding="15">
+            <Frame HeightRequest="400" Padding="0" Margin="5" Style="{StaticResource CardView}" BackgroundColor="{StaticResource Primary}" Grid.ColumnSpan="3">
                 <StackLayout>
-                    <Label Text="Start Time" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" TextColor="{StaticResource Accent}"/>
-                    <HorizontalStackLayout>
-                        <Label Text="Day" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
+                    <Grid x:Name="EditLayout" ColumnSpacing="10" Padding="10" ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                        <Label Text="Start Time:" TextDecorations="Underline" Style="{StaticResource MediumLabel}" Grid.Column="0" Grid.Row="0" HorizontalOptions="Start" TextColor="{StaticResource Primary}"/>
+
+                        <Label Text="        Day" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="1" TextColor="{StaticResource Accent}"/>
                         <Picker x:Name="typePickerStartDay"
-                            Title="Select Start Day:" Grid.Column="1" HeightRequest="35"
-                            SelectedIndex="{Binding SelectedRuleStartDayIndex}" TextColor="{StaticResource Primary}" TitleColor="White">         
+                                    Title="Select Start Day:" Margin="0,-3,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" HeightRequest="35"
+                                    SelectedIndex="{Binding SelectedRuleStartDayIndex}" TextColor="{StaticResource Primary}" HorizontalTextAlignment="Center" TitleColor="White">
                             <Picker.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>Sunday</x:String>
@@ -129,10 +132,10 @@
                                 </x:Array>
                             </Picker.ItemsSource>
                         </Picker>
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout>
-                        <Label Text="Hour" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
-                        <Entry x:Name="entryStartHour" Keyboard="Numeric" MaxLength="2" Text="{Binding SelectedRuleStartHour}">
+
+
+                        <Label Text="        Hour" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="2" TextColor="{StaticResource Accent}"/>
+                        <Entry x:Name="entryStartHour" Keyboard="Numeric" MaxLength="2" Margin="0,-7,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Text="{Binding SelectedRuleStartHour}" HorizontalTextAlignment="Center">
                             <Entry.Behaviors>
                                 <toolkit:NumericValidationBehavior 
                                     InvalidStyle="{StaticResource InvalidEntryStyle}"
@@ -143,10 +146,10 @@
                                     MaximumDecimalPlaces="0" />
                             </Entry.Behaviors>
                         </Entry>
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout>
-                        <Label Text="Minute" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
-                        <Entry x:Name="entryStartMinute" Keyboard="Numeric" MaxLength="2" Text="{Binding SelectedRuleStartMinute}">
+
+
+                        <Label Text="        Minute" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="3" TextColor="{StaticResource Accent}"/>
+                        <Entry x:Name="entryStartMinute" Keyboard="Numeric" MaxLength="2" Margin="0,-7,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Text="{Binding SelectedRuleStartMinute}" HorizontalTextAlignment="Center">
                             <Entry.Behaviors>
                                 <toolkit:NumericValidationBehavior 
                                     InvalidStyle="{StaticResource InvalidEntryStyle}"
@@ -157,12 +160,11 @@
                                     MaximumDecimalPlaces="0" />
                             </Entry.Behaviors>
                         </Entry>
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout>
-                        <Label Text="AM/PM" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
+
+                        <Label Text="        AM/PM" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="4" TextColor="{StaticResource Accent}"/>
                         <Picker x:Name="typePickerStartAMPM"
-                            Title="Select Start Day:" Grid.Column="1" HeightRequest="35"
-                            SelectedIndex="{Binding SelectedRuleStartAMPMIndex}" TextColor="{StaticResource Primary}" TitleColor="White">
+                            Title="Select AM or PM:" Margin="0,-4,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" HeightRequest="35"
+                            SelectedIndex="{Binding SelectedRuleStartAMPMIndex}" TextColor="{StaticResource Primary}" HorizontalTextAlignment="Center" TitleColor="White">
                             <Picker.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>AM</x:String>
@@ -170,13 +172,13 @@
                                 </x:Array>
                             </Picker.ItemsSource>
                         </Picker>
-                    </HorizontalStackLayout>
-                    <Label Text="Stop Time" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" TextColor="{StaticResource Accent}"/>
-                    <HorizontalStackLayout>
-                        <Label Text="Day" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
+
+                        <Label Text="Stop Time:" Style="{StaticResource MediumLabel}" TextDecorations="Underline" Grid.Column="0" Grid.Row="5" HorizontalOptions="Start" TextColor="{StaticResource Primary}"/>
+
+                        <Label Text="        Day" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="6" TextColor="{StaticResource Accent}"/>
                         <Picker x:Name="typePickerStopDay"
-                            Title="Select Stop Day:" Grid.Column="1" HeightRequest="35" 
-                            SelectedIndex="{Binding SelectedRuleStopDayIndex}" TextColor="Black" TitleColor="White">
+                            Title="Select Stop Day:" Margin="0,-3,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="6" HeightRequest="35" 
+                            SelectedIndex="{Binding SelectedRuleStopDayIndex}" TextColor="Black" HorizontalTextAlignment="Center" TitleColor="White">
                             <Picker.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>Sunday</x:String>
@@ -189,10 +191,9 @@
                                 </x:Array>
                             </Picker.ItemsSource>
                         </Picker>
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout>
-                        <Label Text="Hour" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
-                        <Entry x:Name="entryStopHour" Keyboard="Numeric" MaxLength="2" Text="{Binding SelectedRuleStopHour}">
+
+                        <Label Text="        Hour" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="7" TextColor="{StaticResource Accent}"/>
+                        <Entry x:Name="entryStopHour" Keyboard="Numeric" MaxLength="2" Margin="0,-7,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="7" Text="{Binding SelectedRuleStopHour}" HorizontalTextAlignment="Center">
                             <Entry.Behaviors>
                                 <toolkit:NumericValidationBehavior 
                                     InvalidStyle="{StaticResource InvalidEntryStyle}"
@@ -203,10 +204,9 @@
                                     MaximumDecimalPlaces="0" />
                             </Entry.Behaviors>
                         </Entry>
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout>
-                        <Label Text="Minute" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
-                        <Entry x:Name="entryStopMinute" Keyboard="Numeric" MaxLength="2" Text="{Binding SelectedRuleStopMinute}">
+
+                        <Label Text="        Minute" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="8" TextColor="{StaticResource Accent}"/>
+                        <Entry x:Name="entryStopMinute" Keyboard="Numeric" MaxLength="2" Margin="0,-7,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="8" Text="{Binding SelectedRuleStopMinute}" HorizontalTextAlignment="Center">
                             <Entry.Behaviors>
                                 <toolkit:NumericValidationBehavior 
                                     InvalidStyle="{StaticResource InvalidEntryStyle}"
@@ -217,12 +217,11 @@
                                     MaximumDecimalPlaces="0" />
                             </Entry.Behaviors>
                         </Entry>
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout>
-                        <Label Text="AM/PM" Style="{StaticResource MediumLabel}" HorizontalOptions="Center" Grid.Column="0" TextColor="{StaticResource Accent}"/>
+
+                        <Label Text="        AM/PM" Style="{StaticResource MediumLabel}" HorizontalOptions="Start" Grid.Column="0" Grid.Row="9" TextColor="{StaticResource Accent}"/>
                         <Picker x:Name="typePickerStopAMPM"
-                            Title="Select Start Day:" Grid.Column="1" HeightRequest="35"
-                            SelectedIndex="{Binding SelectedRuleStopAMPMIndex}" TextColor="{StaticResource Primary}" TitleColor="White">
+                            Title="Select AM or PM:" Margin="0,-4,0,0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="9" HeightRequest="35"
+                            SelectedIndex="{Binding SelectedRuleStopAMPMIndex}" TextColor="{StaticResource Primary}" HorizontalTextAlignment="Center" TitleColor="White">
                             <Picker.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>AM</x:String>
@@ -230,45 +229,52 @@
                                 </x:Array>
                             </Picker.ItemsSource>
                         </Picker>
-                    </HorizontalStackLayout>
 
-                    <Button
-                    Text="Cancel"
-                    BackgroundColor="{StaticResource Primary}"
-                    TextColor="{StaticResource Accent}"
-                    Grid.Row="1"
-                    Command="{Binding CancelEditRuleCommand}"
-                    HorizontalOptions="Center"
-                    Margin="10"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="1"
-                    CornerRadius="10"
-                    BorderColor="{StaticResource Accent}"
-                    BorderWidth="1"/>
+                    </Grid>
+                    <Grid x:Name="EditLayoutBtns" ColumnSpacing="10" Padding="10" ColumnDefinitions="*,*,*" >
+                        <Button
+                            Text="Save"
+                            WidthRequest="75"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="{StaticResource Accent}"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Command="{Binding SaveLockRuleCommand}"
+                            HorizontalOptions="Start"
+                            Margin="10"
+                            CornerRadius="10"
+                            BorderColor="{StaticResource Accent}"
+                            BorderWidth="1"/>
 
-                    <Button
-                    Text="Delete"
-                    BackgroundColor="{StaticResource Primary}"
-                    TextColor="{StaticResource Accent}"
-                    Grid.Row="1"
-                    HorizontalOptions="Start"
-                    Margin="10"
-                    Grid.ColumnSpan="2"
-                    CornerRadius="10"
-                    BorderColor="{StaticResource Accent}"
-                    BorderWidth="1"/>
+                        <Button
+                            Text="Delete"
+                            WidthRequest="75"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="{StaticResource Accent}"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Command="{Binding DeleteRuleCommand}"
+                            HorizontalOptions="Center"
+                            Margin="10"
+                            CornerRadius="10"
+                            BorderColor="{StaticResource Accent}"
+                            BorderWidth="1"
+                            IsVisible="{Binding IsEditAdd}"/>
 
-                    <Button
-                     Text="Save"
-                     BackgroundColor="{StaticResource Primary}"
-                     TextColor="{StaticResource Accent}"
-                     Grid.Row="1"
-                     HorizontalOptions="Start"
-                     Margin="10"
-                     Grid.ColumnSpan="2"
-                     CornerRadius="10"
-                     BorderColor="{StaticResource Accent}"
-                     BorderWidth="1"/>
+                        <Button
+                            Text="Cancel"
+                            WidthRequest="75"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="{StaticResource Accent}"
+                            Grid.Column="2"
+                            Grid.Row="1"
+                            Command="{Binding CancelEditRuleCommand}"
+                            HorizontalOptions="End"
+                            Margin="10"
+                            CornerRadius="10"
+                            BorderColor="{StaticResource Accent}"
+                            BorderWidth="1"/>
+                    </Grid>
                 </StackLayout>
             </Frame>
         </Grid>

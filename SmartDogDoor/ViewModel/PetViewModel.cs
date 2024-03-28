@@ -6,6 +6,8 @@ public partial class PetViewModel : BaseViewModel
     PetService petService;//Object of PetSerivce for getting info from database
     public ObservableCollection<Pet> Pets { get; } = new();//Data Collection of data from Database
 
+    private bool firstPageLoad = false; 
+
     // for keeping track of pet being added
     private bool _isAddPet = false;
 
@@ -274,7 +276,12 @@ public partial class PetViewModel : BaseViewModel
         {
 
             //await GetPetsLocal();
-            await GetPetsAsync();
+            if(!firstPageLoad)
+            {
+                await GetPetsAsync();
+                firstPageLoad = true;
+            }
+            
 
         }
         catch (Exception ex)

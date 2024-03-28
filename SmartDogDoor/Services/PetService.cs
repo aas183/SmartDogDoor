@@ -436,24 +436,44 @@ public class PetService
 
     }
 
-    /*
-    public async void addLock(string timeStart, string timeStop, bool lockUnlock)
+    
+    public async Task addLock(Lock restriction)
     {
-        //connect to database
+        var newLock = new { id = restriction.Id, timeStartDay = restriction.TimeStartDay, timeStartHour = restriction.TimeStartHour, timeStartMinute = restriction.TimeStartMinute, timeStopDay = restriction.TimeStopDay, timeStopHour = restriction.TimeStopHour, timeStopMinute = restriction.TimeStopMinute };
+  
+        var jsonContent = JsonConvert.SerializeObject(newLock);
 
-        //add entry to locking restriction database table with passed parameters
+        var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        //var httpContent = new StringContent(jsonPetInfo);
+        var url = $"https://petconnect.azurewebsites.net//api/addLockRestriction";
+        Console.Write($"Request Url: {url}");
+        var response = await httpClient.PostAsync(url, httpContent);
+        //use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Debug.WriteLine(response.Content);
+        }
 
+        Debug.WriteLine("Added Pet");
+
+        return;
     }
-    */
+    
 
-    /*
-    public async void deleteLock(Lock lock)
+   
+    public async Task deleteLock(int id)
     {
-        //connect to database
-
-        //delete entry of locking restriction database table with has entires same as the members of passed Lock object
+        var url = $"https://petconnect.azurewebsites.net/api/deleteLockRestriction/{id}";
+        Console.Write($"Request Url: {url}\n");
+        var response = await httpClient.DeleteAsync(url);
+        // use async for webapi calls
+        Console.Write(response);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.Write(response.Content);
+        }
     }
-    */
 
 }
 
