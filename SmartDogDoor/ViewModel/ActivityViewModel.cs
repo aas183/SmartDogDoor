@@ -90,7 +90,7 @@ public partial class ActivityViewModel : BaseViewModel
             {
                 Debug.WriteLine(ex);
                 await Shell.Current.DisplayAlert("Error!",
-                    $"Unable to get pets: {ex.Message}", "OK");
+                    $"Unable to get pet activity: {ex.Message}", "OK");
             }
             finally
             {

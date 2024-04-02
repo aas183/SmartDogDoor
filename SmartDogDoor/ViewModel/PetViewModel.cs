@@ -125,6 +125,8 @@ public partial class PetViewModel : BaseViewModel
         {
             Debug.WriteLine(ex);
         }
+
+        return;
     }
 
     /*
@@ -274,14 +276,19 @@ public partial class PetViewModel : BaseViewModel
     {
         try
         {
-
-            //await GetPetsLocal();
+            await GetPetsAsync();
+            /*
             if(!firstPageLoad)
             {
                 await GetPetsAsync();
                 firstPageLoad = true;
             }
-            
+            else
+            {
+                await GetPetsLocal();
+            }
+            */
+
 
         }
         catch (Exception ex)
