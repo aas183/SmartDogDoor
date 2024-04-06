@@ -10,8 +10,23 @@ public partial class ActivityViewModel : BaseViewModel
     PetService petService;
     public ObservableCollection<PetActivity> Activities { get; } = new();
     public ObservableCollection<PetActivity> FilteredActivities { get; } = new();
-    public ObservableCollection<Pet> Pets { get; } = new();
-   
+    //public ObservableCollection<Pet> Pets { get; } = new();
+
+    private ObservableCollection<Pet> _pets = new();//Data Collection of data from Database
+    //[NotifyPropertyChangedFor(nameof(Activities))]
+    public ObservableCollection<Pet> Pets
+    {
+        get
+        {
+            return _pets;
+        }
+        set
+        {
+            _pets = value;
+            OnPropertyChanged(nameof(Pets));
+        }
+    }
+
     // for keeping track of selected pet for activity filter
     private Pet _selectedPet;
     public Pet SelectedPet
@@ -263,13 +278,13 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
-    // Runs on appearing of pgae
+    // Runs on appearing of page
     [RelayCommand]
     async Task Appearing()
     {
         try
         {
-            GetPetsLocal();
+            await GetPetsAsync();
             if(!firstAppear)// first appearing of page
             {
                 firstAppear = true;

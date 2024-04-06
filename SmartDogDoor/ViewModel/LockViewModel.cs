@@ -187,7 +187,7 @@ public partial class LockViewModel : BaseViewModel
     {
         Title = "Access";
         this.petService = petService;
-        GetLocksAsync();// get locks when page is created
+        //GetLocksAsync();// get locks when page is created
     }
 
     // Get locking rules from database
@@ -748,6 +748,20 @@ public partial class LockViewModel : BaseViewModel
                 }
             default:
                 return -1;
+        }
+    }
+
+    // Runs on appearing of page
+    [RelayCommand]
+    async Task Appearing()
+    {
+        try
+        {
+            await GetLocksAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
         }
     }
 }
