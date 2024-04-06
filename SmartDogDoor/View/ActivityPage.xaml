@@ -93,13 +93,6 @@
 
                 </CollectionView>
 
-                <Button Text="Get Activity"
-                 Style="{StaticResource ButtonOutline}"
-                 Command="{Binding GetActivitiesCommand}"
-                 IsEnabled="{Binding IsNotBusy}"
-                 Grid.Row="1"
-                 Margin="8"/>
-
                 <!--Busy Indicator for Page-->
                 <ActivityIndicator IsVisible="{Binding IsBusy}"
                 IsRunning="{Binding IsBusy}"

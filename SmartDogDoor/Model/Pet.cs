@@ -2,7 +2,7 @@
 
 namespace SmartDogDoor.Model;
 
-//class for pet infromation database table information
+// Model for pet
 public class Pet
 {
 

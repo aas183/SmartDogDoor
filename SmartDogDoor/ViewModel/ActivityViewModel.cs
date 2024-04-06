@@ -1,5 +1,7 @@
 ﻿using SmartDogDoor.Services;
+using SmartDogDoor.View;
 using System.Diagnostics;
+using System.Threading;
 
 namespace SmartDogDoor.ViewModel;
 
@@ -9,6 +11,8 @@ public partial class ActivityViewModel : BaseViewModel
     public ObservableCollection<PetActivity> Activities { get; } = new();
     public ObservableCollection<PetActivity> FilteredActivities { get; } = new();
     public ObservableCollection<Pet> Pets { get; } = new();
+   
+    // for keeping track of selected pet for activity filter
     private Pet _selectedPet;
     public Pet SelectedPet
     {
@@ -22,6 +26,8 @@ public partial class ActivityViewModel : BaseViewModel
             filterActivity();
         }
     }
+
+    // keep track of selected index for most Recent or pet filter
     private int _selectedFilterIndex = 0;
     public int SelectedFilterIndex
     {
@@ -36,16 +42,15 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
-    bool firstAppear = false;
+    bool firstAppear = false; // keep track of firt appearing of page
 
     public ActivityViewModel(PetService petService)
     {
         Title = "Activity";
         this.petService = petService;
-        //GetPetsAsync();
     }
 
-
+    // Get Pet Activity
     [RelayCommand]
     async Task GetActivitiesAsync ()
     {
@@ -54,39 +59,35 @@ public partial class ActivityViewModel : BaseViewModel
             try
             {
                 IsBusy = true;
-                var activities = await petService.GetPetActivities();
-            
+
+                var activities = await petService.GetPetActivities();// get activity
+                
+                // clear activities if new activity
                 if(Activities.Count != 0)
                 {
                     Activities.Clear();
                     FilteredActivities.Clear();
                 }
-                /*
-                var selectedPetId;
-                if (SelectedFilterIndex == 1)
-                {
-                    selectedPetId = _selectedPet.Id;
-                }
-                */
 
+                // insert new activities in list and activities in filtered list
                 foreach (var activity in activities)
                 {
-                    Activities.Insert(0,activity);
-                    if (SelectedFilterIndex == 0)
+                    Activities.Insert(0,activity);// insert activity
+                    if (SelectedFilterIndex == 0)// Most Recent
                     {
                         FilteredActivities.Insert(0, activity);
                     }
-                    else
+                    else// Pet Filter
                     {
-                        if (_selectedPet != null && activity.Id == _selectedPet.Id)
+                        if (_selectedPet != null && activity.Id == _selectedPet.Id)// pet is selected and Id matches
                         {
-                            FilteredActivities.Insert(0, activity);
+                            FilteredActivities.Insert(0, activity);// inset activity into filtered activity
                         }
                     }
                 }
                
             }
-            catch (Exception ex)
+            catch (Exception ex) // catch errors
             {
                 Debug.WriteLine(ex);
                 await Shell.Current.DisplayAlert("Error!",
@@ -96,11 +97,66 @@ public partial class ActivityViewModel : BaseViewModel
             {
                 IsBusy = false;
             }
-        //  Thread.Sleep(5000);
-        //}
     }
 
-    //Get Details from pet Information Page
+    // Get actvities every 30 seconds (only called on first appear of activity page
+    void GetActivitiesContinuousAsync()
+    {
+        // Run on new thread continoulsy every 30 seconds will check for new activity
+        new Thread(async() =>
+        {
+            Thread.CurrentThread.IsBackground = true;
+
+            while(true) // run forever
+            { 
+                try
+                {
+                    IsBusy = true;
+                    var activities = await petService.GetPetActivities();// get activity
+
+                    // insert new activities in list and activities in filtered list
+                    if (Activities.Count != activities.Count)// if new activity
+                    {
+                        Activities.Clear();
+                        FilteredActivities.Clear();
+
+
+                        foreach (var activity in activities)
+                        {
+                            Activities.Insert(0, activity);
+                            if (SelectedFilterIndex == 0)
+                            {
+                                FilteredActivities.Insert(0, activity);
+                            }
+                            else
+                            {
+                                if (_selectedPet != null && activity.Id == _selectedPet.Id)
+                                {
+                                    FilteredActivities.Insert(0, activity);
+                                }
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    await Shell.Current.DisplayAlert("Error!",
+                        $"Unable to get pet activity: {ex.Message}", "OK");
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+                Thread.Sleep(30000);
+            }
+        }).Start();
+
+    }
+
+
+    //Get Pets
     [RelayCommand]
     async Task GetPetsAsync()
     {
@@ -114,7 +170,7 @@ public partial class ActivityViewModel : BaseViewModel
             IsBusy = true;
             var pets = await petService.GetPets();//Get pets
 
-            if (Pets.Count != 0)//clear pet list if full
+            if (Pets.Count != 0)//clear pet list if not empty
                 Pets.Clear();
 
             foreach (var pet in pets)//update pet list from service call
@@ -134,7 +190,7 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
-    //Get Details from pet Information Page from local save in pet service
+    //Get Pets locally saved in per service
     [RelayCommand]
     void GetPetsLocal()
     {
@@ -173,11 +229,11 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
-    //Get Details from pet Information Page
+    // Filter Activity
     //[RelayCommand]
     public void filterActivity()
     {
-        if(SelectedFilterIndex == 0)
+        if(SelectedFilterIndex == 0)// most recent selecte
         {
             FilteredActivities.Clear();
             foreach (var activity in Activities)
@@ -185,9 +241,9 @@ public partial class ActivityViewModel : BaseViewModel
                 FilteredActivities.Add(activity);
             }
         }
-        else
+        else// Pet Filter selected
         {
-            if (_selectedPet != null)
+            if (_selectedPet != null)// if pet is selected
             {
                 var selectedPetId = _selectedPet.Id;
                 FilteredActivities.Clear();
@@ -205,31 +261,24 @@ public partial class ActivityViewModel : BaseViewModel
                 FilteredActivities.Clear();
             }
         }
-        //call pet service, getPetActivities(), to update Activities observable collection
-
-        //check time_pet bool
-        //If 1 time filter activated
-            //sort entries in observable collection by most recent time first
-        //If 0 pet name selected;
-            //look through observable collection and delete entries that do not have the passed petID
-            //sort entries by most recent activity first
     }
 
+    // Runs on appearing of pgae
     [RelayCommand]
     async Task Appearing()
     {
         try
         {
-
-            //await GetPetsLocal();
             GetPetsLocal();
-           // if(!firstAppear)
-            //{
-            //    firstAppear = true;
+            if(!firstAppear)// first appearing of page
+            {
+                firstAppear = true;
+                GetActivitiesContinuousAsync();
+            }
+            else
+            {
                 await GetActivitiesAsync();
-            //}
-            
-            //await GetPetsAsync();
+            }
             
         }
         catch (Exception ex)

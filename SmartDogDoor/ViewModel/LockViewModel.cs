@@ -58,6 +58,7 @@ public partial class LockViewModel : BaseViewModel
         }
     }
 
+    // for keeping track of selected start day index when editng/adding a lock rule
     private int _selectedRuleStartDayIndex = 0;
     public int SelectedRuleStartDayIndex
     {
@@ -69,10 +70,10 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStartDayIndex = value;
             OnPropertyChanged(nameof(SelectedRuleStartDayIndex));
-            //filterActivity();
         }
     }
 
+    // for keeping track of selected start hour index when editng/adding a lock rule
     private String _selectedRuleStartHour;
     public String SelectedRuleStartHour
     {
@@ -84,10 +85,10 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStartHour = value;
             OnPropertyChanged(nameof(SelectedRuleStartHour));
-            //filterActivity();
         }
     }
 
+    // for keeping track of selected start minute index when editng/adding a lock rule
     private String _selectedRuleStartMinute;
     public String SelectedRuleStartMinute
     {
@@ -99,10 +100,10 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStartMinute = value;
             OnPropertyChanged(nameof(SelectedRuleStartMinute));
-            //filterActivity();
         }
     }
 
+    // for keeping track of selected start AM/PM index when editng/adding a lock rule
     private int _selectedRuleStartAMPMIndex = 0;
     public int SelectedRuleStartAMPMIndex
     {
@@ -114,11 +115,10 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStartAMPMIndex = value;
             OnPropertyChanged(nameof(SelectedRuleStartAMPMIndex));
-            //filterActivity();
         }
     }
 
-
+    // for keeping track of selected stop day index when editng/adding a lock rule
     private int _selectedRuleStopDayIndex = 0;
     public int SelectedRuleStopDayIndex
     {
@@ -130,10 +130,11 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStopDayIndex = value;
             OnPropertyChanged(nameof(SelectedRuleStopDayIndex));
-            //filterActivity();
         }
     }
 
+
+    // for keeping track of selected stop hour index when editng/adding a lock rule
     private String _selectedRuleStopHour;
     public String SelectedRuleStopHour
     {
@@ -145,10 +146,11 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStopHour = value;
             OnPropertyChanged(nameof(SelectedRuleStopHour));
-            //filterActivity();
         }
     }
 
+
+    // for keeping track of selected stop minute index when editng/adding a lock rule
     private String _selectedRuleStopMinute;
     public String SelectedRuleStopMinute
     {
@@ -160,10 +162,11 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStopMinute = value;
             OnPropertyChanged(nameof(SelectedRuleStopMinute));
-            //filterActivity();
         }
     }
 
+
+    // for keeping track of selected stop AM/PM index when editng/adding a lock rule
     private int _selectedRuleStopAMPMIndex = 0;
     public int SelectedRuleStopAMPMIndex
     {
@@ -175,20 +178,19 @@ public partial class LockViewModel : BaseViewModel
         {
             _selectedRuleStopAMPMIndex = value;
             OnPropertyChanged(nameof(SelectedRuleStopAMPMIndex));
-            //filterActivity();
         }
     }
 
-    private int selectedRuleId;
+    private int selectedRuleId;// currently selected rule id
 
     public LockViewModel(PetService petService)
     {
         Title = "Access";
         this.petService = petService;
-        GetLocksAsync();
+        GetLocksAsync();// get locks when page is created
     }
 
-
+    // Get locking rules from database
     [RelayCommand]
     async Task GetLocksAsync ()
     {
@@ -197,15 +199,15 @@ public partial class LockViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            var locks = await petService.GetLocks();
+            var locks = await petService.GetLocks();// get locking rules
 
-            if(Locks.Count != 0)
+            if(Locks.Count != 0)// clear locking rule list if populated
                 Locks.Clear();
 
             IsNotAlwaysLocked = true; // Check for always locked condition
 
             int count = 1;
-            foreach (var lockRule in locks)
+            foreach (var lockRule in locks)// parse each locking rule
             {
                 if (lockRule.Id == -1)
                 {
@@ -283,10 +285,11 @@ public partial class LockViewModel : BaseViewModel
         }
     }
 
+    // Edit Selected Rule
     [RelayCommand]
     async Task EditRule(Lock restriction)
     {
-        if(IsNotAlwaysLocked && !IsEditLocks)
+        if(IsNotAlwaysLocked && !IsEditLocks)// if not always locked enabled and lock rule is not being edited
         {
             // Set Start Rule
             selectedRuleId = restriction.Id;
@@ -323,12 +326,14 @@ public partial class LockViewModel : BaseViewModel
 
     }
 
+    // cancel editing of rule
     [RelayCommand]
     async Task CancelEditRule()
     {
         IsEditLocks = false;
     }
 
+    // New rule popup
     [RelayCommand]
     async Task AddRule()
     {
@@ -354,18 +359,19 @@ public partial class LockViewModel : BaseViewModel
         
     }
 
+    // Deletes locking rule
     [RelayCommand]
     async Task DeleteRule()
     {
         try
         {
-            await petService.deleteLock(selectedRuleId);
+            await petService.deleteLock(selectedRuleId);// delete rule
 
-            await GetLocksAsync();
+            await GetLocksAsync();// get updated lock
 
             IsEditLocks = false;
         }
-        catch (Exception ex)
+        catch (Exception ex)// error checking
         {
             Debug.WriteLine(ex);
             await Shell.Current.DisplayAlert("Error!",
@@ -374,6 +380,7 @@ public partial class LockViewModel : BaseViewModel
         
     }
 
+    // Saves currently edited lock to database whether it a new lock or change to an existing one
     [RelayCommand]
     async Task SaveLockRule()
     {
@@ -463,7 +470,7 @@ public partial class LockViewModel : BaseViewModel
                 alwaysLocked.TimeStopHour = "";
                 alwaysLocked.TimeStopMinute = "";
 
-                await petService.addLock(alwaysLocked);
+                await petService.addLock(alwaysLocked);// add always locked ruel to database
 
                 IsNotAlwaysLocked = false;
             }

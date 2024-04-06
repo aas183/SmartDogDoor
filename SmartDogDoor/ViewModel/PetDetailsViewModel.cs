@@ -101,9 +101,7 @@ public partial class PetDetailsViewModel : BaseViewModel
 
     public PetDetailsViewModel(PetService petService)
     {
-
         this.petService = petService;
-       // GetActivitiesAsync();
     }
 
 
@@ -116,14 +114,14 @@ public partial class PetDetailsViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            var activities = await petService.GetPetActivities();
+            var activities = await petService.GetPetActivities();// get activity
 
             if (Activities.Count != 0)
             {
                 Activities.Clear();
             }
 
-            foreach (var activity in activities)
+            foreach (var activity in activities)// add activity for selected pet
             {
                 if(activity.Id == Pet.Id)
                     Activities.Insert(0, activity);
@@ -145,17 +143,10 @@ public partial class PetDetailsViewModel : BaseViewModel
     [RelayCommand]
     async Task deletePetAsync()
     {
-        //Prompt user "Are you sure if you want to delete pet from system?" (Yes/No)
-
-        //If no 
-        //quit
-        //If yes
-        //call pet service, deletePetImages(), to delete all images associated Id
-        //all pet services, deletePet(), to delete all entries for selected pet's id in pet information and pet activity table
         try
         {
-            await petService.deleteAllPetInformation(Pet.Id);
-            PetNameSaved = "Pet Deleted!";
+            await petService.deleteAllPetInformation(Pet.Id);// delete pet
+            PetNameSaved = "Pet Deleted!";// change title to pet deleted
             PetName = "";
             PetImageFile = "";
         } 
@@ -167,7 +158,7 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
     
-
+    // chnage pet name
    async Task changePetNameAsync()
    {
         //call pet service function chnagePetName() to change name of pet in pet information database table entry with passed petID
@@ -179,7 +170,7 @@ public partial class PetDetailsViewModel : BaseViewModel
             
             for (int i = 0; i < Activities.Count; ++i)
             {
-                //Update names in list (this forces the property chnaged event
+                //Update names in list (this forces the property chnaged event)
                 Console.Write($"\nName Change");
                 var activity = Activities[i];
                 activity.Name = PetName;
@@ -200,20 +191,21 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
 
+    // save pet changes in form
     [RelayCommand]
     async Task savePetChanges()
     {
         //save changes made to pet information by user
         try
         {
-            if (PetName != Pet.Name) // Change Pet Name
+            if (PetName != Pet.Name)// Change Pet Name
             {
                 Console.Write($"\nPet.Name: {Pet.Name}, PetName: {PetName}");
                 await changePetNameAsync();
             }
 
             // Change Pet Image
-            if (PetImageFile != "" && PetImageFile != PetImageSaved) // Save Image
+            if (PetImageFile != "" && PetImageFile != PetImageSaved)// Change Image
             {
                 await petService.deletePetImage(Pet.Image);//delete current pet image
                 var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
@@ -221,7 +213,7 @@ public partial class PetDetailsViewModel : BaseViewModel
                 Pet.Image = image;
                 PetImageSaved = image;
             }
-            else if (PetImageFile == "")
+            else if (PetImageFile == "")// Change image if no previous image was registered with pet
             {
              
                 var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);
@@ -244,7 +236,7 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
     
-    //User Picks Image From System
+    // User Picks Image From System
     [RelayCommand]
     async Task<FileResult> PickImage(PickOptions options)
     {
@@ -254,11 +246,10 @@ public partial class PetDetailsViewModel : BaseViewModel
             if (result != null)
             {
                 if (result.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
-                    result.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+                    result.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))// only allow jpg and png to be selected
                 {
-                    //using var stream = await result.OpenReadAsync();
-                    selectedPetImage = result.FullPath;
-                    PetImageFile = result.FileName;
+                    selectedPetImage = result.FullPath;// save path to selected image
+                    PetImageFile = result.FileName;// save selected image filename
                 }
             }
 
@@ -271,15 +262,13 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
 
+    // On page appearing
     [RelayCommand]
     async Task Appearing()
     {
         try
         {
-
-            //await GetPetsLocal();
-            await GetActivitiesAsync();
-
+            await GetActivitiesAsync();// get pet actvities for selected pet
         }
         catch (Exception ex)
         {

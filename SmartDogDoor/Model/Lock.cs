@@ -2,6 +2,7 @@
 
 namespace SmartDogDoor.Model;
 
+// Model for locking restrictions
 public class Lock
 {
     public int Id { get; set; }

@@ -2,6 +2,7 @@
 
 namespace SmartDogDoor.Model;
 
+// Model for pet activity
 public class PetActivity
 {
 

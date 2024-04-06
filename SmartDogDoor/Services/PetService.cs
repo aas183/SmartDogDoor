@@ -1,16 +1,10 @@
 ﻿namespace SmartDogDoor.Services;
 using System.Net.Http.Json;
 using System;
-using Microsoft.Data.SqlClient;
 using System.Text;
-using Azure.Storage.Blobs;
-using Azure.Identity;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
-using CommunityToolkit.Maui.Converters;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Plugin.LocalNotification;
+using System.Diagnostics;
 
 
 
@@ -23,15 +17,16 @@ public class PetService
         httpClient = new HttpClient();
     }
 
+    const int MAX_ACTIVITY = 100;
     //Lists for entries from database tables
     List<Pet> petList = new ();
     List<PetActivity> petActivityList = new();
-    List<PetActivity> petActivityListRaw = new(); // for keeping timestamps in orginial form
+    //List<PetActivity> petActivityListRaw = new(); // for keeping timestamps in orginial form
     List<Lock> lockList = new();
 
 
     // Struct for checking all images
-    public struct savedImages
+    public struct savedImages // struct for holding saved image content
     {
         String uri;
         public String name;
@@ -48,7 +43,8 @@ public class PetService
         var url = "https://petconnect.azurewebsites.net/api/petInfo";
 
         var response = await httpClient.GetAsync(url);
-        //use async for webapi calls
+        
+        // if successful get content
         if (response.IsSuccessStatusCode)
         {
             Console.Write(response.Content);
@@ -66,19 +62,21 @@ public class PetService
 
 
 
-    //Function to get data from Pet Information Database Table
+    // Function to change pet name
     public async Task ChangePetName(string id, string name)
     {
         var url = $"https://petconnect.azurewebsites.net/api/pet/{id}/name/{name}";
         Console.Write($"Request Url: {url}");
         var response = await httpClient.PutAsync(url,null);
-        //use async for webapi calls
+        
+        //  print response
         Console.Write(response);
         if (response.IsSuccessStatusCode)
         {
             Console.Write(response.Content);
         }
 
+        // change pet name in petList
         foreach (var pet in petList)
         {
             if (pet.Id == id)
@@ -103,7 +101,7 @@ public class PetService
         Console.Write($"Request Url: {url}");
         var response = await httpClient.PostAsync(url, httpContent);
         
-        // Get Response
+        // Check response
         Console.Write(response);
         if (response.IsSuccessStatusCode)
         {
@@ -119,56 +117,65 @@ public class PetService
     // check for pet id of zero to see if pet has been successfully added
     public async Task<bool> checkForPetIdOfZero()
     {
+        // Configure command and data to recieve response
         var url = "https://petconnect.azurewebsites.net/api/petId";
         List<Pet> Ids = new();
 
+        // Send command
         var response = await httpClient.GetAsync(url);
-        //use async for webapi calls
+        
+        // if successful check for id of zero
         if (response.IsSuccessStatusCode)
         {
             Console.Write(response.Content);
             Ids = await response.Content.ReadFromJsonAsync<List<Pet>>();
 
+            // check for id of 0
             foreach(var pet in Ids)
             {
                 if (pet.Id == "0")
                 {
-                    return false;
+                    return false; // id of 0 found
                 }
             }
         }
 
-        return true;
+        return true; // no id of 0
     }
     
     // check for pet id of zero to see if pet has been successfully added
     public async Task<bool> checkForNewId(int petCount)
     {
+        // Configure command and data to recieve response
         var url = "https://petconnect.azurewebsites.net/api/petId";
         List<Pet> Ids = new();
-
+        
+        // Send Command
         var response = await httpClient.GetAsync(url);
-        //use async for webapi calls
+
+        // If successful check if a new pet entry
         if (response.IsSuccessStatusCode)
         {
             Console.Write(response.Content);
             Ids = await response.Content.ReadFromJsonAsync<List<Pet>>();
 
-            if (Ids.Count > petCount)
+            if (Ids.Count > petCount)// new pet
             {
                 return true;
             }
         }
 
-        return false;
+        return false;// no new pet
     }
 
     // Delete Pet Entry from Pet Information Table
     public async Task deletePet (string id)
     {
+        // Send Command
         var url = $"https://petconnect.azurewebsites.net/api/deletePet/{id}";
         Console.Write($"Request Url: {url}\n");
         var response = await httpClient.DeleteAsync(url);
+
         //use async for webapi calls
         Console.Write(response);
         if (response.IsSuccessStatusCode)
@@ -181,10 +188,11 @@ public class PetService
     public async Task deleteAllPetInformation(string id)
     {
 
-        await deleteAllPetImages(id);
+        await deleteAllPetImages(id); // delete all images associated with pet
 
-        await GetPetActivities();
+        await GetPetActivities(); // get pet activities
 
+        // loop through and delete all pet activites
         foreach(var activity in petActivityList)//petActivityListRaw
         {
             if (activity.Id  == id)
@@ -193,7 +201,7 @@ public class PetService
             }
         }
 
-        await deletePet(id);
+        await deletePet(id); // delete pet entry
 
         return;
     }
@@ -201,13 +209,11 @@ public class PetService
     // Delete an entry in the pet activity table
     public async Task deletePetActivity(string timestamp)
     {
-        // Fix
-        Console.WriteLine("Activity to Delete");
-        Console.WriteLine(timestamp);
-
+        // Send Command to Delete
         var url = $"https://petconnect.azurewebsites.net/api/deletePetActivity/{timestamp}";
         Console.Write($"Request Url: {url}\n");
         var response = await httpClient.DeleteAsync(url);
+
         //use async for webapi calls
         Console.Write(response);
         if (response.IsSuccessStatusCode)
@@ -224,13 +230,14 @@ public class PetService
         var multipartContent = new MultipartFormDataContent();
         var saveFilename = "";
         
+        // convert image stored on phone to byte array
         var file = new ByteArrayContent(File.ReadAllBytes(imagePath)) ?? throw new ArgumentException($"Unable to access file at: {imagePath}", nameof(imagePath));
 
         Debug.WriteLine(fileName);
         var index = fileName.LastIndexOf('.');
         var fileType = fileName.Substring(index, fileName.Length - index - 1);
         Debug.WriteLine(index);
-        if (fileType == "png")
+        if (fileType == "png") // if png update saved file name to be png
         {
             file.Headers.Add("Content-Type", "image/png");
             if(petName.IndexOf(".png") != -1)
@@ -243,7 +250,7 @@ public class PetService
             }
             
         }
-        else
+        else  // if jpg update saved file name to be png
         {
             file.Headers.Add("Content-Type", "image/jpeg");
             if (petName.IndexOf(".jpg") != -1)
@@ -262,15 +269,15 @@ public class PetService
         var response = await httpClient.PostAsync(url, multipartContent);
         response.EnsureSuccessStatusCode(); // this throws an exception on non HTTP success codes
 
-        return saveFilename;
+        return saveFilename; // return new filename
     }
 
     // Change Pet Profile Image for passed pet in database
     public async Task<String> changePetImage(string id, string filename)
     {
         var url = $"https://petconnect.azurewebsites.net/api/pet/{id}/image/{filename}";
-        Console.Write($"Request Url: {url}");
         var response = await httpClient.PutAsync(url, null);
+        
         //use async for webapi calls
         Console.Write(response);
         if (response.IsSuccessStatusCode)
@@ -278,6 +285,7 @@ public class PetService
             Console.Write(response.Content);
         }
 
+        // Insert new image in pet with passed pet id
         var newImage = $"https://petimagestorage.blob.core.windows.net/pet-images/{filename}";
         foreach (var pet in petList)
         {
@@ -293,7 +301,7 @@ public class PetService
     // Delete all images associated with a pet
     public async Task deleteAllPetImages(string Id)
     {
-        
+        // Delete all images of pet activity associated with pet
         foreach(var activity in petActivityList)
         {
             if (activity.Id == Id)
@@ -302,6 +310,7 @@ public class PetService
             }
         }
 
+        // Delete Pet Profile Image
         foreach (var pet in petList)
         {
             if (pet.Id == Id)
@@ -315,10 +324,10 @@ public class PetService
     // delete specified image in database (blob storage)
     public async Task deletePetImage(string image)
     {
-        bool result = await imageExists(image);
+        bool result = await imageExists(image); // check if image exists
         if (result)
         {
-            //check if image is currently in database before deleteing it.
+            //parse image name
             var index = image.LastIndexOf('/');
             if (index == -1) // image not valid
                 return;
@@ -341,18 +350,18 @@ public class PetService
         List<savedImages> Images = new List<savedImages>();
 
         var url = "https://petconnect.azurewebsites.net/api/Files";
-
         var response = await httpClient.GetAsync(url);
+
         //use async for webapi calls
         if (response.IsSuccessStatusCode) // if successful return;
         {
             Console.Write(response.Content);
             Images = await response.Content.ReadFromJsonAsync<List<savedImages>>();
 
-            //Get InOut Colors
+            // Check current saved image against image name
             foreach (var savedImage in Images)
             {
-                if (savedImage.name == image)
+                if (savedImage.name == image) // image found
                 {
                     return true;
                 }
@@ -361,24 +370,25 @@ public class PetService
 
         }
 
-        return false;
+        return false; // image not found
     }
 
     //Function for getting entries from Pet Activity database table.
     public async Task<List<PetActivity>> GetPetActivities()
     {
+        // get old list count and clear it
         int numberOldActivity = petActivityList.Count();
         petActivityList.Clear();//clear current pet list
 
         var url = "https://petconnect.azurewebsites.net/api/petActivity";
-
         var response = await httpClient.GetAsync(url);
+        
         //use async for webapi calls
         if (response.IsSuccessStatusCode)
         {
             Console.Write(response.Content);
             petActivityList = await response.Content.ReadFromJsonAsync<List<PetActivity>>();
-            petActivityListRaw = petActivityList;
+            //petActivityListRaw = petActivityList;
 
             var numberNewActivity = petActivityList.Count() - numberOldActivity;
 
@@ -386,7 +396,7 @@ public class PetService
             foreach (var activity in petActivityList)
             {
                 //Get InOut Colors
-                if (activity.InOut == "True")
+                if (activity.InOut.ToLower() == "true")
                 { 
                     activity.InOut = "In";
                     activity.InOutColor = Color.FromRgba("#008450");
@@ -395,8 +405,7 @@ public class PetService
                 {
                     activity.InOut = "Out";
                     activity.InOutColor = Color.FromRgba("#B81D13");
-                }
-                    
+                }     
             }
 
             //Get Pet Names
@@ -423,12 +432,8 @@ public class PetService
             // Send Notifications (Possibly update to include pet image in notification this may be difficult....)
             if (numberOldActivity != 0)
             {
-                for (int i = 0; i < numberNewActivity; i++)
+                for (int i = 0; i < numberNewActivity; ++i)
                 {
-                    //if (!LocalNotificationCenter.Current.AreNotificationsEnabled().Result)
-                    //{
-                    //    await LocalNotificationCenter.Current.RequestNotificationPermission();
-                    //}
                     var request = new NotificationRequest
                     {
                         NotificationId = (1000 + i),
@@ -440,24 +445,31 @@ public class PetService
                     await LocalNotificationCenter.Current.Show(request);
                 }
             }
-        }
 
-        //Debug.WriteLine("Notification Enabled?");
-        //Debug.WriteLine(LocalNotificationCenter.Current.AreNotificationsEnabled().Result);
+            // Delete Pet Activity if there are more entries than max activity
+            if(petActivityList.Count() > MAX_ACTIVITY)
+            {
+                for (int i = MAX_ACTIVITY; i < petActivityList.Count(); ++i)
+                {
+                    await deletePetActivity(DateTimeOffset.Parse(petActivityList[i].TimeStamp).ToUnixTimeSeconds().ToString());
+                    petActivityList.RemoveAt(i);
+                }
+            }
+        }
 
         return petActivityList;
     }
 
+
     //Function for getting entries from locking restriction database table.
     public async Task<List<Lock>> GetLocks()
     {
-        lockList.Clear();//clear current pet list
+        lockList.Clear();//clear current lock list
 
-        //Eventually add check for new activity 
-
+        // Get lock list
         var url = "https://petconnect.azurewebsites.net/api/lockRestriction";
-
         var response = await httpClient.GetAsync(url);
+        
         //use async for webapi calls
         if (response.IsSuccessStatusCode)
         {
@@ -472,15 +484,16 @@ public class PetService
     // Function to add locking restrictions
     public async Task addLock(Lock restriction)
     {
+        // Format lock information for api
         var newLock = new { id = restriction.Id, timeStartDay = restriction.TimeStartDay, timeStartHour = restriction.TimeStartHour, timeStartMinute = restriction.TimeStartMinute, timeStopDay = restriction.TimeStopDay, timeStopHour = restriction.TimeStopHour, timeStopMinute = restriction.TimeStopMinute };
-  
         var jsonContent = JsonConvert.SerializeObject(newLock);
 
+        // Add Lock Information to Database
         var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        //var httpContent = new StringContent(jsonPetInfo);
         var url = $"https://petconnect.azurewebsites.net//api/addLockRestriction";
         Console.Write($"Request Url: {url}");
         var response = await httpClient.PostAsync(url, httpContent);
+
         //use async for webapi calls
         Console.Write(response);
         if (response.IsSuccessStatusCode)
