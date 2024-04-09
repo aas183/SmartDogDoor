@@ -1,4 +1,6 @@
-﻿namespace SmartDogDoor.View;
+﻿using Microsoft.Maui.Controls;
+
+namespace SmartDogDoor.View;
 
 public partial class ActivityPage : ContentPage
 {
@@ -8,7 +10,7 @@ public partial class ActivityPage : ContentPage
          InitializeComponent();
         // ViewModel = viewModel;
          BindingContext = viewModel;
-     }
+    }
 
     
     void OnTypePickerSelectedIndexChanged(object sender, EventArgs e)
@@ -25,5 +27,10 @@ public partial class ActivityPage : ContentPage
         {
             petPicker.IsVisible = true;
         }
+    }
+
+    void zoomActivity(object sender, EventArgs e)
+    {
+        ScrollView.ScrollToAsync(0, 0, false);
     }
 }

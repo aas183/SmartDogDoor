@@ -42,11 +42,15 @@ public partial class PetViewModel : BaseViewModel
         }
     }
 
+
+    IConnectivity connectivity;
+
     //Constructor of ViewModel
-    public PetViewModel(PetService petService)
+    public PetViewModel(PetService petService, IConnectivity connectivity)
     {
         Title = "Pets";
         this.petService = petService;
+        this.connectivity = connectivity;
     }
 
 
@@ -74,6 +78,12 @@ public partial class PetViewModel : BaseViewModel
 
         try
         {
+            if(connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
             IsBusy = true;
             var pets = await petService.GetPets();//Get pets
 
@@ -82,6 +92,12 @@ public partial class PetViewModel : BaseViewModel
 
             foreach (var pet in pets)// update pet list from service call
             {
+                if(pet.Id == "0")
+                {
+                    await petService.deletePet("0");
+                    continue;
+                }
+
                 //Get InOut Colors
                 if (pet.InOut.ToLower() == "true")
                 {
@@ -143,8 +159,17 @@ public partial class PetViewModel : BaseViewModel
         //If data pull is already occurring quit
         if (IsBusy) return;
 
+
+        bool isInternet = true;
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                isInternet = false;
+                return;
+            }
             AddPetDialog = "Place the Pet's Tag Against the Tag Reader on the Dog Door within\n60 seconds.";// prompt the user what to do
 
             // Set busy flags
@@ -198,8 +223,11 @@ public partial class PetViewModel : BaseViewModel
         }
         finally
         {
-            IsBusy = false;//set busy back to false
-            await GetPetsAsync();
+            if (isInternet)
+            {
+                IsBusy = false;//set busy back to false
+                await GetPetsAsync();
+            }   
         }
 
         return;
@@ -209,9 +237,23 @@ public partial class PetViewModel : BaseViewModel
     [RelayCommand]
     async Task cancelPetAdd()
     {
-        if(!(await petService.checkForPetIdOfZero()))// check for id of 0 still exists
-            await petService.deletePet("0");// delete pet entry with Id of 0
-        IsAddPet = false;// set flag to no longer adding pet
+        try
+        {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
+            if (!(await petService.checkForPetIdOfZero()))// check for id of 0 still exists
+                await petService.deletePet("0");// delete pet entry with Id of 0
+             IsAddPet = false;// set flag to no longer adding pet
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
+        }
+
     }
 
     // On page appearing

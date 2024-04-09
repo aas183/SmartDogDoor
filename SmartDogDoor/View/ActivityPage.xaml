@@ -19,7 +19,7 @@
         <toolkit:StatusBarBehavior StatusBarColor="{StaticResource Accent}"/>
     </ContentPage.Behaviors>
 
-    <ScrollView>
+    <ScrollView x:Name="ScrollView">
         <StackLayout>
             <Grid ColumnDefinitions="*,*"
                 ColumnSpacing="5"
@@ -55,13 +55,15 @@
                 <CollectionView BackgroundColor="Transparent"
                          Grid.ColumnSpan="2"
                          ItemsSource="{Binding FilteredActivities}"
-                         SelectionMode="None">
+                         SelectionMode="None" x:Name="CollectionView">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:PetActivity">
                             <!-- Bind Pet Model to View-->
                             <Grid Padding="5">
                                 <Frame HeightRequest="90" Padding="0" Style="{StaticResource CardView}">
                                     <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="zoomActivity" CommandParameter="{Binding .}" 
+                                                                  Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ActivityViewModel}}, Path=zoomActivityCommand}"/>
                                     </Frame.GestureRecognizers>
                                     <Grid Padding="0" ColumnDefinitions="90,*">
                                         <Image Aspect="AspectFill"
@@ -101,7 +103,56 @@
                 VerticalOptions="CenterAndExpand"
                 Grid.RowSpan="2"
                 Grid.ColumnSpan="2"/>
+
+                <Grid x:Name="ZoomActivity" IsVisible ="{Binding IsZoom}" Grid.ColumnSpan="2" Padding="15" VerticalOptions="Start">
+                    <Frame HeightRequest="350" Padding="0" Style="{StaticResource CardView}">
+                        <VerticalStackLayout Padding="10">
+                            <Frame
+                               HeightRequest="215"
+                               WidthRequest="215"
+                               CornerRadius="20"
+                               HorizontalOptions="Center"
+                               IsClippedToBounds="True"
+                               Padding="0"
+                               Margin="0,0,0,0">
+
+                                   <Image Aspect="AspectFill"
+                                       
+                                     
+                                       Source="{Binding SelectedZoomActivityImage}"/>
+                            </Frame>
+                            <Label Text="{Binding SelectedZoomActivityPetName}" Style="{StaticResource LargeLabel}" HorizontalOptions="Center"/>
+                            <Label Text="{Binding SelectedZoomActivityTimeStamp}" Style="{StaticResource MediumLabel}" HorizontalOptions="Center"/>
+                            <HorizontalStackLayout HorizontalOptions="Center">
+                                <Frame Margin="1"
+                                    BorderColor="{Binding SelectedZoomActivityInOutColor}" 
+                                    BackgroundColor="{Binding SelectedZoomActivityInOutColor}"
+                                    CornerRadius="50"
+                                    HeightRequest="4"
+                                    WidthRequest="4"
+                                    IsClippedToBounds="True"
+                                    HorizontalOptions="Start"
+                                    VerticalOptions="Start">
+                                </Frame>
+                                <Label Text="{Binding SelectedZoomActivityInOut}" Style="{StaticResource MediumLabel}"/>
+                            </HorizontalStackLayout>
+
+                            <Button
+                                Text="Exit"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="{StaticResource Accent}"
+                                Command="{Binding cancelZoomCommand}"
+                                Grid.Row="1"
+                                HorizontalOptions="Center"
+                                Margin="10"
+                                Grid.ColumnSpan="2"
+                                CornerRadius="10"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                </Grid>
             </Grid>
+
+            
         </StackLayout>
     </ScrollView>
 

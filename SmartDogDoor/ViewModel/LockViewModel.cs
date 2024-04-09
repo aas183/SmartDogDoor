@@ -183,11 +183,13 @@ public partial class LockViewModel : BaseViewModel
 
     private int selectedRuleId;// currently selected rule id
 
-    public LockViewModel(PetService petService)
+    IConnectivity connectivity;
+
+    public LockViewModel(PetService petService, IConnectivity connectivity)
     {
         Title = "Access";
         this.petService = petService;
-        //GetLocksAsync();// get locks when page is created
+        this.connectivity = connectivity;
     }
 
     // Get locking rules from database
@@ -198,6 +200,12 @@ public partial class LockViewModel : BaseViewModel
 
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
             IsBusy = true;
             var locks = await petService.GetLocks();// get locking rules
 
@@ -365,6 +373,13 @@ public partial class LockViewModel : BaseViewModel
     {
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
+
             await petService.deleteLock(selectedRuleId);// delete rule
 
             await GetLocksAsync();// get updated lock
@@ -386,7 +401,14 @@ public partial class LockViewModel : BaseViewModel
     {
         try
         {
-            if(IsEditAdd) // edit current rule
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
+
+            if (IsEditAdd) // edit current rule
             {
                 // For for input Validity
                 if ((Int32.Parse(SelectedRuleStartHour) > 12 || Int32.Parse(SelectedRuleStartHour) < 1) || (Int32.Parse(SelectedRuleStartMinute) > 59 || Int32.Parse(SelectedRuleStartMinute) < 0) || (Int32.Parse(SelectedRuleStopHour) > 12 || Int32.Parse(SelectedRuleStopHour) < 1) || (Int32.Parse(SelectedRuleStopMinute) > 59 || Int32.Parse(SelectedRuleStopMinute) < 0))
@@ -419,7 +441,14 @@ public partial class LockViewModel : BaseViewModel
 
                 // Make new lock to pass to add lock
                 Lock editLock = new Lock();
-                editLock.Id = Locks[Locks.Count-1].Id+1; // set Id to highest current id + 1
+                if (Locks.Count > 0)
+                {
+                    editLock.Id = Locks[Locks.Count - 1].Id + 1; // set Id to highest current id + 1
+                }
+                else
+                {
+                    editLock.Id = 1;
+                }
                 editLock.TimeStartDay = $"{SelectedRuleStartDayIndex}";
                 editLock.TimeStartHour = $"{ConvertHourToMilitary(SelectedRuleStartHour, SelectedRuleStartAMPMIndex)}";
                 editLock.TimeStartMinute = SelectedRuleStartMinute;
@@ -452,7 +481,14 @@ public partial class LockViewModel : BaseViewModel
         }
         try
         {
-            if(!IsNotAlwaysLocked) // disable always locked
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
+
+            if (!IsNotAlwaysLocked) // disable always locked
             {
                 Title = "Access";
                 IsNotAlwaysLocked = true;

@@ -99,9 +99,12 @@ public partial class PetDetailsViewModel : BaseViewModel
         }
     }
 
-    public PetDetailsViewModel(PetService petService)
+    IConnectivity connectivity;
+
+    public PetDetailsViewModel(PetService petService, IConnectivity connectivity)
     {
         this.petService = petService;
+        this.connectivity = connectivity;
     }
 
 
@@ -113,6 +116,12 @@ public partial class PetDetailsViewModel : BaseViewModel
         Console.Write("Run GetPetActivity");
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
             IsBusy = true;
             var activities = await petService.GetPetActivities();// get activity
 
@@ -145,6 +154,12 @@ public partial class PetDetailsViewModel : BaseViewModel
     {
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
             await petService.deleteAllPetInformation(Pet.Id);// delete pet
             PetNameSaved = "Pet Deleted!";// change title to pet deleted
             PetName = "";
@@ -164,6 +179,12 @@ public partial class PetDetailsViewModel : BaseViewModel
         //call pet service function chnagePetName() to change name of pet in pet information database table entry with passed petID
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
             Console.Write($"\nPet.Id: {Pet.Id}, PetName: {PetName}");
             await petService.ChangePetName(Pet.Id,PetName);
             PetNameSaved = PetName;
@@ -198,6 +219,15 @@ public partial class PetDetailsViewModel : BaseViewModel
         //save changes made to pet information by user
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet) // Check for internet access
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
+
+            IsBusy = true;
+
             if (PetName != Pet.Name)// Change Pet Name
             {
                 Console.Write($"\nPet.Name: {Pet.Name}, PetName: {PetName}");
@@ -213,7 +243,7 @@ public partial class PetDetailsViewModel : BaseViewModel
                 Pet.Image = image;
                 PetImageSaved = image;
             }
-            else if (PetImageFile == "")// Change image if no previous image was registered with pet
+            else if (PetImageFile == "" && PetImageSaved != "")// Change image if no previous image was registered with pet
             {
              
                 var imageFilename = await petService.addPetImageDatabase(selectedPetImage, PetImageFile, /*Pet.Name*/PetImageFile);

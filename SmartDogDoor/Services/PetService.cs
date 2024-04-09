@@ -17,7 +17,7 @@ public class PetService
         httpClient = new HttpClient();
     }
 
-    const int MAX_ACTIVITY = 100;
+    const int MAX_ACTIVITY = 40;
     //Lists for entries from database tables
     List<Pet> petList = new ();
     List<PetActivity> petActivityList = new();
@@ -417,6 +417,7 @@ public class PetService
                     if(activity.Id == pet.Id)
                     {
                         activity.Name = pet.Name;
+                        activity.Image = pet.Image;
                     }
                 }
             }

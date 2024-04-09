@@ -57,61 +57,159 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
+    // for keeping track of pet being added
+    private bool _isZoom = false;
+
+    public bool IsZoom
+    {
+        get
+        {
+            return _isZoom;
+        }
+        set
+        {
+            _isZoom = value;
+            OnPropertyChanged(nameof(IsZoom));
+        }
+    }
+
+    // for holding selected activity pet name
+    private String _selectedZoomActivityPetName;
+    public String SelectedZoomActivityPetName
+    {
+        get
+        {
+            return _selectedZoomActivityPetName;
+        }
+        set
+        {
+            _selectedZoomActivityPetName = value;
+            OnPropertyChanged(nameof(SelectedZoomActivityPetName));
+        }
+    }
+
+    // for holding selected activity timestamp
+    private String _selectedZoomActivityTimeStamp;
+    public String SelectedZoomActivityTimeStamp
+    {
+        get
+        {
+            return _selectedZoomActivityTimeStamp;
+        }
+        set
+        {
+            _selectedZoomActivityTimeStamp = value;
+            OnPropertyChanged(nameof(SelectedZoomActivityTimeStamp));
+        }
+    }
+
+    // for holding selected activity Image
+    private String _selectedZoomActivityImage;
+    public String SelectedZoomActivityImage
+    {
+        get
+        {
+            return _selectedZoomActivityImage;
+        }
+        set
+        {
+            _selectedZoomActivityImage = value;
+            OnPropertyChanged(nameof(SelectedZoomActivityImage));
+        }
+    }
+
+    // for holding selected activity Image
+    private String _selectedZoomActivityInOut;
+    public String SelectedZoomActivityInOut
+    {
+        get
+        {
+            return _selectedZoomActivityInOut;
+        }
+        set
+        {
+            _selectedZoomActivityInOut = value;
+            OnPropertyChanged(nameof(SelectedZoomActivityInOut));
+        }
+    }
+
+    // for holding selected activity Image
+    private Color _selectedZoomActivityInOutColor;
+    public Color SelectedZoomActivityInOutColor
+    {
+        get
+        {
+            return _selectedZoomActivityInOutColor;
+        }
+        set
+        {
+            _selectedZoomActivityInOutColor = value;
+            OnPropertyChanged(nameof(SelectedZoomActivityInOutColor));
+        }
+    }
+
     bool firstAppear = false; // keep track of firt appearing of page
 
-    public ActivityViewModel(PetService petService)
+    IConnectivity connectivity;
+
+    public ActivityViewModel(PetService petService, IConnectivity connectivity)
     {
         Title = "Activity";
         this.petService = petService;
+        this.connectivity = connectivity;
     }
 
     // Get Pet Activity
     [RelayCommand]
     async Task GetActivitiesAsync ()
     {
-        //while(true)
-        //{ 
-            try
-            {
-                IsBusy = true;
+        try
+        {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+        {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
+            IsBusy = true;
 
-                var activities = await petService.GetPetActivities();// get activity
+            var activities = await petService.GetPetActivities();// get activity
                 
-                // clear activities if new activity
-                if(Activities.Count != 0)
-                {
-                    Activities.Clear();
-                    FilteredActivities.Clear();
-                }
+            // clear activities if new activity
+            if(Activities.Count != 0)
+            {
+                Activities.Clear();
+                FilteredActivities.Clear();
+            }
 
-                // insert new activities in list and activities in filtered list
-                foreach (var activity in activities)
+            // insert new activities in list and activities in filtered list
+            foreach (var activity in activities)
+            {
+                Activities.Insert(0,activity);// insert activity
+                if (SelectedFilterIndex == 0)// Most Recent
                 {
-                    Activities.Insert(0,activity);// insert activity
-                    if (SelectedFilterIndex == 0)// Most Recent
+                    FilteredActivities.Insert(0, activity);
+                }
+                else// Pet Filter
+                {
+                    if (_selectedPet != null && activity.Id == _selectedPet.Id)// pet is selected and Id matches
                     {
-                        FilteredActivities.Insert(0, activity);
-                    }
-                    else// Pet Filter
-                    {
-                        if (_selectedPet != null && activity.Id == _selectedPet.Id)// pet is selected and Id matches
-                        {
-                            FilteredActivities.Insert(0, activity);// inset activity into filtered activity
-                        }
+                        FilteredActivities.Insert(0, activity);// inset activity into filtered activity
                     }
                 }
+            }
                
-            }
-            catch (Exception ex) // catch errors
-            {
-                Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error!",
-                    $"Unable to get pet activity: {ex.Message}", "OK");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+        }
+        catch (Exception ex) // catch errors
+        {
+            Debug.WriteLine(ex);
+            await Shell.Current.DisplayAlert("Error!",
+                $"Unable to get pet activity: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     // Get actvities every 30 seconds (only called on first appear of activity page
@@ -126,6 +224,17 @@ public partial class ActivityViewModel : BaseViewModel
             { 
                 try
                 {
+                    if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+                    {
+                        Thread.Sleep(30000);
+                        continue;
+                        /*
+                        await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                            $"Please check your internet and try again!", "OK");
+                        continue;
+                        */
+
+                    }
                     IsBusy = true;
                     var activities = await petService.GetPetActivities();// get activity
 
@@ -179,9 +288,14 @@ public partial class ActivityViewModel : BaseViewModel
         //If data pull is already occurring quit
         if (IsBusy) return;
 
-
         try
         {
+            if (connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                await Shell.Current.DisplayAlert("Internet Connectivity Issue",
+                    $"Please check your internet and try again!", "OK");
+                return;
+            }
             IsBusy = true;
             var pets = await petService.GetPets();//Get pets
 
@@ -248,7 +362,7 @@ public partial class ActivityViewModel : BaseViewModel
     //[RelayCommand]
     public void filterActivity()
     {
-        if(SelectedFilterIndex == 0)// most recent selecte
+        if(SelectedFilterIndex == 0)// most recent selected
         {
             FilteredActivities.Clear();
             foreach (var activity in Activities)
@@ -278,6 +392,27 @@ public partial class ActivityViewModel : BaseViewModel
         }
     }
 
+    // Zoom in on selected activity
+    [RelayCommand]
+    async Task zoomActivity(PetActivity activity)
+    {
+        // Set selected zoom activity
+        SelectedZoomActivityTimeStamp = activity.TimeStamp;
+        SelectedZoomActivityInOut = activity.InOut;
+        SelectedZoomActivityImage = activity.Image;
+        SelectedZoomActivityPetName = activity.Name; 
+        SelectedZoomActivityInOutColor = activity.InOutColor;
+
+        IsZoom = true;// set zoom activity visible
+    }
+
+    // cancel zoom in of selected activity
+    [RelayCommand]
+    async Task cancelZoom()
+    {
+        IsZoom = false;
+    }
+
     // Runs on appearing of page
     [RelayCommand]
     async Task Appearing()
@@ -287,11 +422,19 @@ public partial class ActivityViewModel : BaseViewModel
             await GetPetsAsync();
             if(!firstAppear)// first appearing of page
             {
+                if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+                {
+                    return;
+                }
                 firstAppear = true;
                 GetActivitiesContinuousAsync();
             }
             else
             {
+                if (connectivity.NetworkAccess != NetworkAccess.Internet)// Check for internet access
+                {
+                    return;
+                }
                 await GetActivitiesAsync();
             }
             

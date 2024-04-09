@@ -24,6 +24,8 @@ public static class MauiProgram
 #if DEBUG
         //Build pages
         builder.Logging.AddDebug();
+
+        builder.Services.AddSingleton<IConnectivity>(Connectivity.Current);
 #endif  
         builder.Services.AddSingleton<PetService>();
 
