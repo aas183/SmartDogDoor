@@ -160,6 +160,9 @@ public partial class PetDetailsViewModel : BaseViewModel
                     $"Please check your internet and try again!", "OK");
                 return;
             }
+
+            IsBusy = true;
+
             await petService.deleteAllPetInformation(Pet.Id);// delete pet
             PetNameSaved = "Pet Deleted!";// change title to pet deleted
             PetName = "";
@@ -170,6 +173,10 @@ public partial class PetDetailsViewModel : BaseViewModel
             Debug.WriteLine(ex);
             await Shell.Current.DisplayAlert("Error!",
                 $"Unable to save changes: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
     

@@ -28,10 +28,10 @@ public class PetService
     // Struct for checking all images
     public struct savedImages // struct for holding saved image content
     {
-        String uri;
-        public String name;
-        String cotentType;
-        String content;
+        public string uri;
+        public string name;
+        public string cotentType;
+        public string content;
     }
     
 
@@ -235,8 +235,9 @@ public class PetService
 
         Debug.WriteLine(fileName);
         var index = fileName.LastIndexOf('.');
-        var fileType = fileName.Substring(index, fileName.Length - index - 1);
+        var fileType = fileName.Substring(index+1, fileName.Length - index - 1);
         Debug.WriteLine(index);
+        Debug.WriteLine(fileType);
         if (fileType == "png") // if png update saved file name to be png
         {
             file.Headers.Add("Content-Type", "image/png");
@@ -324,7 +325,7 @@ public class PetService
     // delete specified image in database (blob storage)
     public async Task deletePetImage(string image)
     {
-        bool result = await imageExists(image); // check if image exists
+        bool result = true;//await imageExists(image); // check if image exists
         if (result)
         {
             //parse image name
@@ -333,7 +334,8 @@ public class PetService
                 return;
             image = image.Substring(index+1, image.Length-index-1);;
 
-            var url = $"https://petconnect.azurewebsites.net/api/Files/filename?filename={image}";//api url        
+            var url = $"https://petconnect.azurewebsites.net/api/Files/filename?filename={image}";//api url
+            Debug.WriteLine(url);                                                                             
 
             //send command
             var response = await httpClient.DeleteAsync(url);
@@ -347,7 +349,7 @@ public class PetService
     async private Task<bool> imageExists(string image)
     {
         // create a list of information returned from web api
-        List<savedImages> Images = new List<savedImages>();
+        List<savedImages> Images = new ();
 
         var url = "https://petconnect.azurewebsites.net/api/Files";
         var response = await httpClient.GetAsync(url);
@@ -355,13 +357,18 @@ public class PetService
         //use async for webapi calls
         if (response.IsSuccessStatusCode) // if successful return;
         {
-            Console.Write(response.Content);
+            Debug.WriteLine(response.Content);
             Images = await response.Content.ReadFromJsonAsync<List<savedImages>>();
+
+            Debug.WriteLine(Images);
 
             // Check current saved image against image name
             foreach (var savedImage in Images)
             {
-                if (savedImage.name == image) // image found
+                Debug.WriteLine(savedImage.uri);
+                Debug.WriteLine(savedImage.name);
+                Debug.WriteLine(image);
+                if (savedImage.uri == image) // image found
                 {
                     return true;
                 }
